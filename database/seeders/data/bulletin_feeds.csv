@@ -1,0 +1,54 @@
+label,feed_type,query,url,category
+ELN combate operativo,google_news,ELN Colombia combate operativo,,grupos_armados
+FARC disidencias,google_news,FARC disidencias Colombia,,grupos_armados
+Clan del Golfo bacrim,google_news,clan del golfo bacrim Colombia,,grupos_armados
+Masacre,google_news,masacre Colombia,,grupos_armados
+Paro armado bloqueo armado,google_news,paro armado bloqueo armado Colombia,,grupos_armados
+Desplazamiento forzado,google_news,desplazamiento forzado Colombia,,grupos_armados
+Mina antipersona,google_news,mina antipersona campo minado Colombia,,grupos_armados
+Narcotrafico coca laboratorio,google_news,narcotráfico coca laboratorio Colombia,,grupos_armados
+Ejercito operativo captura,google_news,ejército colombia operativo captura,,orden_publico
+Policia Nacional operativo,google_news,policía nacional colombia operativo,,orden_publico
+Armada operativo incautacion,google_news,armada colombia operativo incautación,,orden_publico
+Fiscalia captura imputado,google_news,fiscalia colombia captura imputado,,orden_publico
+DIJIN SIJIN captura,google_news,dijin sijin colombia captura,,orden_publico
+Hurto atraco fleteo,google_news,hurto atraco fleteo Colombia,,orden_publico
+Homicidio sicariato,google_news,homicidio sicariato Colombia,,orden_publico
+Extorsion vacuna criminal,google_news,extorsión vacuna criminal Colombia,,orden_publico
+Secuestro,google_news,secuestro Colombia 2025,,orden_publico
+Catatumbo Norte de Santander,google_news,catatumbo norte de santander,,grupos_armados
+Arauca conflicto armado,google_news,arauca conflicto armado,,grupos_armados
+Choco conflicto armado,google_news,chocó conflicto armado,,grupos_armados
+Cauca conflicto indigenas,google_news,cauca conflicto armado indígenas,,grupos_armados
+Bajo Cauca Antioquia violencia,google_news,bajo cauca antioquia violencia,,grupos_armados
+Putumayo Narino conflicto,google_news,putumayo nariño conflicto,,grupos_armados
+Uraba Antioquia violencia,google_news,urabá antioquia violencia,,grupos_armados
+INVIAS via cerrada derrumbe,google_news,invias via cerrada derrumbe colombia,,vial
+Cierre vial carretera,google_news,cierre vial carretera colombia,,vial
+Accidente vial carretera,google_news,accidente vial carretera colombia,,vial
+Deslizamiento via,google_news,deslizamiento vía colombia,,vial
+Bloqueo vial protesta,google_news,bloqueo vial protesta colombia,,vial
+IDEAM alerta inundacion,google_news,ideam alerta inundación colombia,,ambiental
+Inundacion emergencia,google_news,inundación emergencia colombia,,ambiental
+Sismo terremoto,google_news,sismo terremoto colombia,,ambiental
+Vendaval emergencia,google_news,vendaval emergencia colombia,,ambiental
+Gestion riesgo evacuacion,google_news,gestión riesgo evacuación colombia,,ambiental
+Protestas bloqueos,google_news,protestas bloqueos colombia,,protesta
+Manifestaciones paro,google_news,manifestaciones paro colombia,,protesta
+Bloqueo vial Bogota,google_news,bloqueo vial bogota,,vial
+Elecciones 2026 campana,google_news,elecciones Colombia 2026 política campaña,,electoral
+Congreso debates politicos,google_news,congreso Colombia debates políticos 2025,,electoral
+Manifestaciones protestas sociales,google_news,manifestaciones Colombia protestas sociales paro,,protesta
+Movilizaciones sociales bloqueos,google_news,movilizaciones sociales Colombia bloqueos vías,,protesta
+Accidentes de transito,google_news,accidentes de tránsito Colombia vías movilidad,,vial
+Cierre vias plan retorno,google_news,cierre vías Colombia plan retorno accidente carretera,,vial
+Orden publico Antioquia Medellin,google_news,orden público Antioquia Medellín seguridad,,orden_publico
+Orden publico Valle Cali,google_news,orden público Valle del Cauca Cali noticias,,orden_publico
+Bogota seguridad movilidad,google_news,Bogotá seguridad movilidad noticias,,orden_publico
+Caribe Barranquilla Cartagena,google_news,Caribe Colombiano Barranquilla Cartagena seguridad,,orden_publico
+Cierres viales manifestaciones,google_news,cierres viales manifestaciones Colombia bloqueos,,vial
+Disturbios protestas violencia,google_news,disturbios protestas Colombia manifestaciones violencia,,protesta
+Paro arrocero bloqueos,google_news,paro arrocero Colombia bloqueos vías 2025,,protesta
+TransMilenio cierres rutas,google_news,TransMilenio cierres rutas novedades Bogotá,,vial
+Movilidad Bogota accidentes,google_news,movilidad Bogotá accidentes viales cierres,,vial
+El Tiempo Bogota (RSS directo),direct,,https://www.eltiempo.com/rss/bogota.xml,orden_publico
