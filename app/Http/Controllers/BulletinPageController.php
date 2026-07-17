@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Bulletin;
 use App\Models\BulletinEvent;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class BulletinPageController extends Controller
@@ -18,15 +18,9 @@ class BulletinPageController extends Controller
         'municipio' => 'municipality',
     ];
 
-    /** scope_level interno -> slug de URL. */
-    private function slug(string $scopeLevel): string
-    {
-        return array_flip(self::LEVELS)[$scopeLevel] ?? 'nacional';
-    }
-
     /**
      * Home público: directorio de entrada. Muestra el boletín nacional
-     * (resumen), las regiones como tarjetas y una búsqueda por lugar.
+     * (resumen) y las regiones como tarjetas.
      */
     public function home(): View
     {
@@ -39,44 +33,9 @@ class BulletinPageController extends Controller
             ->orderByDesc('critical_events')->orderByDesc('total_events')->orderBy('scope')
             ->get();
 
-        // Lugares para el autocompletado de búsqueda (departamentos + municipios con boletín).
-        $places = Bulletin::query()
-            ->where('batch_id', $batch)
-            ->whereIn('scope_level', ['department', 'municipality'])
-            ->orderBy('scope')
-            ->get(['scope_level', 'scope'])
-            ->unique('scope')
-            ->values();
-
         $updatedAt = $national?->generated_at;
 
-        return view('boletines.home', compact('national', 'regions', 'places', 'updatedAt'));
-    }
-
-    /**
-     * Busca un lugar escrito por el usuario y redirige a su boletín (prefiere
-     * municipio sobre departamento). Si no hay, vuelve al home.
-     */
-    public function search(Request $request): RedirectResponse
-    {
-        $q = trim((string) $request->query('q'));
-        if ($q === '') {
-            return redirect()->route('home');
-        }
-
-        $batch = Bulletin::query()->latest('generated_at')->value('batch_id');
-        $match = Bulletin::query()
-            ->where('batch_id', $batch)
-            ->whereIn('scope_level', ['municipality', 'department', 'region'])
-            ->whereRaw('LOWER(scope) = ?', [mb_strtolower($q)])
-            ->orderByRaw("CASE scope_level WHEN 'municipality' THEN 0 WHEN 'department' THEN 1 ELSE 2 END")
-            ->first();
-
-        if (! $match) {
-            return redirect()->route('home')->with('notFound', $q);
-        }
-
-        return redirect()->route('boletin', ['level' => $this->slug($match->scope_level), 'scope' => $match->scope]);
+        return view('boletines.home', compact('national', 'regions', 'updatedAt'));
     }
 
     /**
@@ -84,6 +43,34 @@ class BulletinPageController extends Controller
      * scopes hijos (región → departamentos → municipios).
      */
     public function show(string $level, ?string $scope = null): View
+    {
+        return view('boletines.detalle', $this->buildViewData($level, $scope));
+    }
+
+    /**
+     * Mismo boletín en PDF (para descargar desde la web y para que el workflow
+     * de n8n lo adjunte en el correo). Se sirve inline: el navegador lo abre y
+     * una petición HTTP obtiene los bytes del PDF.
+     */
+    public function pdf(string $level, ?string $scope = null)
+    {
+        $data = $this->buildViewData($level, $scope);
+
+        if (! $data['bulletin']) {
+            abort(404, 'No hay un boletín generado para este scope.');
+        }
+
+        $suffix = ($scope && $data['scopeLevel'] !== 'national') ? '-'.Str::slug($scope) : '';
+        $filename = 'boletin-'.$level.$suffix.'.pdf';
+
+        return Pdf::loadView('boletines.pdf', $data)->setPaper('a4')->stream($filename);
+    }
+
+    /**
+     * Carga el boletín de un scope + sus eventos, hijos, breadcrumb y stats.
+     * Compartido por la vista web y la generación de PDF.
+     */
+    private function buildViewData(string $level, ?string $scope): array
     {
         $scopeLevel = self::LEVELS[$level] ?? 'national';
         if ($scopeLevel === 'national') {
@@ -155,9 +142,10 @@ class BulletinPageController extends Controller
             'environmental' => $environmental->count(),
         ];
 
-        return view('boletines.detalle', compact(
-            'bulletin', 'scopeLevel', 'scope', 'stats', 'breadcrumb', 'children', 'childLevelSlug',
+        // 'level' se usa en la vista para los enlaces de PDF.
+        return compact(
+            'bulletin', 'scopeLevel', 'scope', 'level', 'stats', 'breadcrumb', 'children', 'childLevelSlug',
             'securityEvents', 'environmental', 'trafficTm', 'trafficOther',
-        ));
+        );
     }
 }

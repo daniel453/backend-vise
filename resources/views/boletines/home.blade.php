@@ -17,11 +17,12 @@
   .hero .sub{font-size:14px;color:rgba(255,255,255,.7);}
   .hero .upd{font-size:12px;color:rgba(255,255,255,.5);margin-top:8px;font-family:monospace;}
 
-  .search{display:flex;gap:8px;max-width:560px;margin:20px auto 0;}
-  .search input{flex:1;font:inherit;font-size:15px;padding:13px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:var(--navy2);color:#fff;}
-  .search input::placeholder{color:rgba(255,255,255,.45);}
-  .search button{font:inherit;font-size:15px;font-weight:700;padding:13px 22px;border-radius:10px;border:none;background:var(--red2);color:#fff;cursor:pointer;}
-  .notfound{max-width:560px;margin:10px auto 0;color:#FCA5A5;font-size:13px;text-align:center;}
+  .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px auto 0;}
+  .btn{font:inherit;font-size:14px;font-weight:700;padding:12px 20px;border-radius:10px;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:8px;text-decoration:none;}
+  .btn-red{background:var(--red2);color:#fff;}
+  .btn-red:hover{background:#a01818;}
+  .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.35);}
+  .btn-ghost:hover{background:rgba(255,255,255,.1);}
 
   .section-t{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:26px 4px 10px;}
 
@@ -54,14 +55,10 @@
     <div class="sub">Consulta el panorama de seguridad, orden público y movilidad de tu zona.</div>
     @if($updatedAt)<div class="upd">Última actualización: {{ \Illuminate\Support\Carbon::parse($updatedAt)->format('d/m/Y · H:i') }}</div>@endif
 
-    <form class="search" action="{{ route('boletin.buscar') }}" method="get">
-      <input name="q" list="places" placeholder="Busca tu municipio o departamento…" autocomplete="off" required>
-      <button type="submit">Buscar</button>
-    </form>
-    <datalist id="places">
-      @foreach($places as $p)<option value="{{ $p->scope }}">@endforeach
-    </datalist>
-    @if(session('notFound'))<div class="notfound">No encontramos “{{ session('notFound') }}”. Prueba con otro lugar o revisa las regiones abajo.</div>@endif
+    <div class="actions">
+      <a class="btn btn-red" href="{{ route('boletin.pdf', ['level'=>'nacional']) }}" target="_blank">⬇ Exportar boletín nacional (PDF)</a>
+      <a class="btn btn-ghost" href="{{ route('destinatarios') }}">✉ Destinatarios del reporte</a>
+    </div>
   </div>
 
   @if(!$national && $regions->isEmpty())

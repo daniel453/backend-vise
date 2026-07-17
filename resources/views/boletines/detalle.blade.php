@@ -24,6 +24,8 @@
   .hr-scope{font-size:26px;font-weight:900;line-height:1.1;margin-top:2px;}
   .hr-datetime{font-size:12px;color:rgba(255,255,255,.65);margin-top:4px;}
   .hr-headline{font-size:13px;font-weight:700;color:#FFD9A8;margin-top:8px;max-width:720px;}
+  .pdf-btn{display:inline-block;margin-top:12px;background:var(--red2);color:#fff;font-size:12px;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none;}
+  .pdf-btn:hover{background:#a01818;}
 
   .drill{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-top:14px;}
   .drill-t{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
@@ -121,6 +123,7 @@
       @if($bulletin){{ \Illuminate\Support\Carbon::parse($bulletin->generated_at)->format('d/m/Y · H:i') }}@else Sin boletín generado @endif
     </div>
     @if($bulletin?->headline)<div class="hr-headline">{{ $bulletin->headline }}</div>@endif
+    @if($bulletin)<a class="pdf-btn" href="{{ route('boletin.pdf', ['level'=>$level, 'scope'=>$scopeLevel==='national'?null:$scope]) }}" target="_blank">⬇ Exportar PDF</a>@endif
   </div>
 
   @if(!$bulletin)
