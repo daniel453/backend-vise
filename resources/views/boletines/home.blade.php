@@ -49,7 +49,7 @@
 <div class="wrap">
 
   <div class="hero">
-    <div class="brand">Alianza VISE · Altum Risk</div>
+    <div class="brand">VISE · Boletines</div>
     <h1>Boletín de Seguridad</h1>
     <div class="sub">Consulta el panorama de seguridad, orden público y movilidad de tu zona.</div>
     @if($updatedAt)<div class="upd">Última actualización: {{ \Illuminate\Support\Carbon::parse($updatedAt)->format('d/m/Y · H:i') }}</div>@endif
@@ -88,8 +88,6 @@
   </div>
 
   @endif
-
-  <div class="foot">CONFIDENCIAL · Alianza VISE-Altum Risk · Documento de inteligencia para clientes.</div>
 </div>
 </body>
 </html>
