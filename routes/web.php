@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 // Sitio público de boletines de seguridad (sin login). Cada visitante entra,
 // navega el scope que quiere y ve/descarga ese boletín.
 Route::get('/', [BulletinPageController::class, 'home'])->name('home');
-Route::get('/boletin/{level}/{scope?}/pdf', [BulletinPageController::class, 'pdf'])->name('boletin.pdf');
+Route::get('/boletin-pdf/{level}/{scope?}', [BulletinPageController::class, 'pdf'])->name('boletin.pdf');
 Route::get('/boletin/{level}/{scope?}', [BulletinPageController::class, 'show'])->name('boletin');
 
 // Destinatarios del reporte nacional (a quién le llega el PDF por correo).
