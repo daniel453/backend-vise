@@ -46,8 +46,9 @@ return [
         'token' => env('BULLETIN_DISPATCH_TOKEN'),
         // Mailer a usar: 'smtp' (una cuenta) o 'roundrobin' (varias, con failover).
         'mailer' => env('BULLETIN_DISPATCH_MAILER', 'smtp'),
-        // En días NORMALES se envía una vez al día a partir de esta hora (Colombia).
-        // En fechas especiales (tabla dispatch_special_dates) se envía cada 2h.
+        // Hora de INICIO (Colombia). Nunca se envía antes de esta hora. En días
+        // normales se envía UNA vez al día a partir de aquí; en fechas especiales
+        // (tabla dispatch_special_dates) se envía CADA 2H desde esta hora.
         'daily_hour' => (int) env('BULLETIN_DISPATCH_DAILY_HOUR', 8),
         'timezone' => env('BULLETIN_DISPATCH_TZ', 'America/Bogota'),
     ],

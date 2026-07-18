@@ -45,13 +45,18 @@ class BulletinDispatchController extends Controller
         $tz = config('services.bulletin_dispatch.timezone', 'America/Bogota');
         $now = Carbon::now($tz);
         $today = $now->toDateString();
+        $startHour = (int) config('services.bulletin_dispatch.daily_hour', 8);
 
         $isSpecial = DispatchSpecialDate::query()->whereDate('date', $today)->exists();
 
-        if (! $isSpecial) {
-            // Día normal: una vez al día, a partir de la hora configurada.
-            $dailyHour = (int) config('services.bulletin_dispatch.daily_hour', 8);
+        // Hora de inicio: no se envía antes de esta hora en NINGÚN modo. En fechas
+        // especiales el envío cada 2h también arranca aquí (nada de madrugada).
+        if ($now->hour < $startHour) {
+            return response()->json(['ok' => true, 'sent' => 0, 'skipped' => "aún no es la hora de inicio ({$startHour}h Colombia)"]);
+        }
 
+        if (! $isSpecial) {
+            // Día normal: además, una sola vez al día.
             $alreadyToday = ReportDispatchLog::query()
                 ->where('scope_level', 'national')
                 ->whereDate('dispatch_date', $today)
@@ -60,10 +65,9 @@ class BulletinDispatchController extends Controller
             if ($alreadyToday) {
                 return response()->json(['ok' => true, 'sent' => 0, 'skipped' => 'ya se envió hoy (envío diario)']);
             }
-            if ($now->hour < $dailyHour) {
-                return response()->json(['ok' => true, 'sent' => 0, 'skipped' => "aún no es la hora diaria ({$dailyHour}h Colombia)"]);
-            }
         }
+        // Fecha especial: envía en cada corrida a partir de la hora de inicio (cada
+        // 2h). El dedup por batch_id (más arriba) evita reenviar el mismo boletín.
 
         $recipients = ReportRecipient::query()
             ->where('scope_level', 'national')
