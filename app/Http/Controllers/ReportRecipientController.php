@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ReportRecipient;
+use App\Services\BulletinDispatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -50,5 +51,47 @@ class ReportRecipientController extends Controller
         $recipient->delete();
 
         return redirect()->route('destinatarios')->with('ok', 'Destinatario eliminado.');
+    }
+
+    /** Envía el boletín nacional a UN correo de prueba (para verificar el SMTP). */
+    public function sendTest(Request $request, BulletinDispatcher $dispatcher): RedirectResponse
+    {
+        $data = $request->validate(['test_email' => 'required|email']);
+
+        $result = $dispatcher->sendNational([['email' => $data['test_email'], 'name' => 'Prueba']], 'prueba');
+
+        if (! ($result['ok'] ?? false)) {
+            return back()->withErrors(['test_email' => 'Aún no hay un boletín nacional generado para enviar.']);
+        }
+        if (($result['failed'] ?? 0) > 0) {
+            return back()->withErrors(['test_email' => 'Falló el envío: '.($result['errors'][0]['error'] ?? 'error desconocido')]);
+        }
+
+        return back()->with('ok', 'Correo de prueba enviado a '.$data['test_email'].'.');
+    }
+
+    /** Envía el boletín nacional a TODOS los destinatarios activos, AHORA (manual). */
+    public function sendNow(BulletinDispatcher $dispatcher): RedirectResponse
+    {
+        $recipients = ReportRecipient::query()
+            ->where('scope_level', 'national')->where('active', true)
+            ->get();
+
+        if ($recipients->isEmpty()) {
+            return back()->withErrors(['email' => 'No hay destinatarios activos.']);
+        }
+
+        $result = $dispatcher->sendNational($recipients, 'manual');
+
+        if (! ($result['ok'] ?? false)) {
+            return back()->withErrors(['email' => 'Aún no hay un boletín nacional generado para enviar.']);
+        }
+
+        $msg = "Enviado a {$result['sent']} de {$result['total']} destinatarios.";
+        if (($result['failed'] ?? 0) > 0) {
+            $msg .= " {$result['failed']} fallaron.";
+        }
+
+        return back()->with('ok', $msg);
     }
 }

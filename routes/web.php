@@ -16,6 +16,8 @@ Route::get('/destinatarios', [ReportRecipientController::class, 'index'])->name(
 Route::post('/destinatarios', [ReportRecipientController::class, 'store'])->name('destinatarios.store');
 Route::patch('/destinatarios/{recipient}', [ReportRecipientController::class, 'toggle'])->name('destinatarios.toggle');
 Route::delete('/destinatarios/{recipient}', [ReportRecipientController::class, 'destroy'])->name('destinatarios.destroy');
+Route::post('/destinatarios/enviar-prueba', [ReportRecipientController::class, 'sendTest'])->name('destinatarios.prueba');
+Route::post('/destinatarios/enviar-ahora', [ReportRecipientController::class, 'sendNow'])->name('destinatarios.enviar');
 
 // Fechas especiales (envío cada 2h en vez de diario).
 Route::get('/fechas-especiales', [SpecialDateController::class, 'index'])->name('fechas');

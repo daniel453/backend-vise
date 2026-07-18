@@ -61,6 +61,23 @@
   </div>
 
   <div class="card">
+    <h2>Probar / Enviar el boletín</h2>
+    <form class="add" action="{{ route('destinatarios.prueba') }}" method="post" style="margin-bottom:12px;">
+      @csrf
+      <input type="email" name="test_email" placeholder="tucorreo@para-probar.com" required>
+      <button type="submit">Enviar prueba a este correo</button>
+    </form>
+    <form action="{{ route('destinatarios.enviar') }}" method="post" onsubmit="return confirm('¿Enviar el boletín nacional a TODOS los destinatarios activos AHORA?')">
+      @csrf
+      <button type="submit" style="font:inherit;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:none;background:#0A2540;color:#fff;cursor:pointer;">Enviar a TODOS ahora</button>
+    </form>
+    <div style="font-size:12px;color:#64748B;margin-top:10px;line-height:1.5;">
+      La <b>prueba</b> manda solo a ese correo (para verificar que las cuentas Gmail funcionan, sin spamear a los clientes).
+      “Enviar a todos” ignora el horario y manda ya a los activos.
+    </div>
+  </div>
+
+  <div class="card">
     <h2>Lista de destinatarios ({{ $recipients->count() }})</h2>
     @if($recipients->isEmpty())
       <div class="empty">Aún no hay correos. Agrega el primero arriba.</div>
