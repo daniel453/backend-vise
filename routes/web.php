@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BulletinPageController;
 use App\Http\Controllers\ReportRecipientController;
+use App\Http\Controllers\SpecialDateController;
 use Illuminate\Support\Facades\Route;
 
 // Sitio público de boletines de seguridad (sin login). Cada visitante entra,
@@ -15,3 +16,8 @@ Route::get('/destinatarios', [ReportRecipientController::class, 'index'])->name(
 Route::post('/destinatarios', [ReportRecipientController::class, 'store'])->name('destinatarios.store');
 Route::patch('/destinatarios/{recipient}', [ReportRecipientController::class, 'toggle'])->name('destinatarios.toggle');
 Route::delete('/destinatarios/{recipient}', [ReportRecipientController::class, 'destroy'])->name('destinatarios.destroy');
+
+// Fechas especiales (envío cada 2h en vez de diario).
+Route::get('/fechas-especiales', [SpecialDateController::class, 'index'])->name('fechas');
+Route::post('/fechas-especiales', [SpecialDateController::class, 'store'])->name('fechas.store');
+Route::delete('/fechas-especiales/{fecha}', [SpecialDateController::class, 'destroy'])->name('fechas.destroy');

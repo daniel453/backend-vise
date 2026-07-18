@@ -58,6 +58,7 @@
     <div class="actions">
       <a class="btn btn-red" href="{{ route('boletin.pdf', ['level'=>'nacional']) }}" target="_blank">⬇ Exportar boletín nacional (PDF)</a>
       <a class="btn btn-ghost" href="{{ route('destinatarios') }}">✉ Destinatarios del reporte</a>
+      <a class="btn btn-ghost" href="{{ route('fechas') }}">📅 Fechas especiales</a>
     </div>
   </div>
 

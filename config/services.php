@@ -40,9 +40,15 @@ return [
         'model' => env('OPENAI_MODEL', 'gpt-5.6-luna'),
     ],
 
-    // Token compartido que debe enviar n8n para disparar el envío del boletín
-    // nacional por correo (evita que cualquiera dispare el envío masivo).
+    // Envío del boletín nacional por correo (lo dispara n8n).
     'bulletin_dispatch' => [
+        // Token compartido — evita que cualquiera dispare el envío masivo.
         'token' => env('BULLETIN_DISPATCH_TOKEN'),
+        // Mailer a usar: 'smtp' (una cuenta) o 'roundrobin' (varias, con failover).
+        'mailer' => env('BULLETIN_DISPATCH_MAILER', 'smtp'),
+        // En días NORMALES se envía una vez al día a partir de esta hora (Colombia).
+        // En fechas especiales (tabla dispatch_special_dates) se envía cada 2h.
+        'daily_hour' => (int) env('BULLETIN_DISPATCH_DAILY_HOUR', 8),
+        'timezone' => env('BULLETIN_DISPATCH_TZ', 'America/Bogota'),
     ],
 ];

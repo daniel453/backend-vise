@@ -49,6 +49,30 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        // Cuentas SMTP adicionales para repartir el volumen del boletín entre
+        // varias (evita los límites diarios de Gmail) y para failover.
+        'smtp2' => [
+            'transport' => 'smtp',
+            'scheme' => env('MAIL2_SCHEME', env('MAIL_SCHEME')),
+            'host' => env('MAIL2_HOST', env('MAIL_HOST', '127.0.0.1')),
+            'port' => env('MAIL2_PORT', env('MAIL_PORT', 587)),
+            'username' => env('MAIL2_USERNAME'),
+            'password' => env('MAIL2_PASSWORD'),
+            'timeout' => null,
+            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+        ],
+
+        'smtp3' => [
+            'transport' => 'smtp',
+            'scheme' => env('MAIL3_SCHEME', env('MAIL_SCHEME')),
+            'host' => env('MAIL3_HOST', env('MAIL_HOST', '127.0.0.1')),
+            'port' => env('MAIL3_PORT', env('MAIL_PORT', 587)),
+            'username' => env('MAIL3_USERNAME'),
+            'password' => env('MAIL3_PASSWORD'),
+            'timeout' => null,
+            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],
@@ -88,12 +112,11 @@ return [
             'retry_after' => 60,
         ],
 
+        // Reparte cada correo entre varias cuentas SMTP (balanceo) y si una
+        // falla, usa la siguiente (failover). El envío del boletín usa este.
         'roundrobin' => [
             'transport' => 'roundrobin',
-            'mailers' => [
-                'ses',
-                'postmark',
-            ],
+            'mailers' => array_values(array_filter(array_map('trim', explode(',', (string) env('BULLETIN_DISPATCH_MAILERS', 'smtp,smtp2,smtp3'))))),
             'retry_after' => 60,
         ],
 
