@@ -1,71 +1,75 @@
-group,source,coverage,domain
-Policía,Policía Nacional · Sala de prensa,Nacional y regional,
-Policía,"Policía Metropolitanas (MEBOG, MEVAL, MECAL...)",Ciudades principales,
-Policía,Policía Nacional · Estadística delictiva (SIEDCO),"Nal., dep., municipal",
-Policía,DIJIN · Revista Criminalidad,"Nal., departamental",
-Ministerio de Defensa,Ministerio de Defensa Nacional,Nacional,
-Ministerio de Defensa,Ejército Nacional,Nacional y regional,
-Ministerio de Defensa,Divisiones del Ejército (1a a 8a),Regional,
-Ministerio de Defensa,Fuerza Aeroespacial (FAC),Nacional,
-Ministerio de Defensa,Armada Nacional,"Costas, ríos, fronteras",
-Ministerio de Defensa,Comando General FF. MM.,Nacional,
-Ministerio de Defensa,Logros de la Política de Defensa,"Nal., departamental",
-Secretaría de seguridad,Secretaría Distrital de Seguridad · Bogotá,Bogotá y localidades,
-Secretaría de seguridad,Alcaldía de Bogotá,Bogotá,
-Secretaría de seguridad,Alcaldía de Medellín (SISC),Medellín,
-Secretaría de seguridad,Alcaldía de Cali,Cali,
-Secretaría de seguridad,Alcaldía de Barranquilla,Barranquilla,
-Secretaría de seguridad,Alcaldía de Cartagena,Cartagena,
-Secretaría de seguridad,Gobernación de Antioquia,Antioquia,
-Secretaría de seguridad,Gobernación de Cundinamarca,Cundinamarca,
-Secretaría de seguridad,Gobernación del Valle del Cauca,Valle del Cauca,
-Secretaría de seguridad,Gobernación del Atlántico,Atlántico,
-Secretaría de seguridad,Gobernación de Santander,Santander,
-Secretaría de seguridad,Otras gobernaciones y alcaldías,Dep. y municipal,
-Observatorios y fundaciones,DANE · Convivencia y Seguridad (ECSC),"Nal., 13+ ciudades",
-Observatorios y fundaciones,Medicina Legal · Forensis,"Nal., dep., municipal",
-Observatorios y fundaciones,Fiscalía General de la Nación,"Nal., dep., municipal",
-Observatorios y fundaciones,Observatorio de Política Criminal · MinJusticia,"Nal., dep., municipal",
-Observatorios y fundaciones,Portal de Datos Abiertos de Colombia,Nacional,
-Observatorios y fundaciones,INDEPAZ,"Nacional, regional",
-Observatorios y fundaciones,CERAC,"Nacional, regional",
-Observatorios y fundaciones,Fundación Ideas para la Paz (FIP),"Nacional, regional",
-Observatorios y fundaciones,Corporación Excelencia en la Justicia (CEJ),Nacional,
-Observatorios y fundaciones,Fundación Paz y Reconciliación (Pares),"Nacional, regional",
-Gremios y mermas,FENALCO · Censo Nacional de Mermas,"Nacional, ciudades",
-Gremios y mermas,FENALCO · Noticias y seccionales,"Nacional, regional",
-Gremios y mermas,ANDI,"Nacional, sectorial",
-Gremios y mermas,FASECOLDA,Nacional,
-Gremios y mermas,COLFECAR (transporte de carga),Corredores viales,
-Medios nacionales,El Tiempo,"Nacional, regional",eltiempo.com
-Medios nacionales,El Espectador,Nacional,elespectador.com
-Medios nacionales,Semana,Nacional,semana.com
-Medios nacionales,RCN Radio,"Nacional, regional",rcnradio.com
-Medios nacionales,Caracol Radio,"Nacional, regional",caracol.com.co
-Medios nacionales,Blu Radio,Nacional,bluradio.com
-Medios nacionales,Noticias Caracol,Nacional,noticiascaracol.com
-Medios nacionales,Noticias RCN,Nacional,noticiasrcn.com
-Medios nacionales,W Radio,Nacional,wradio.com.co
-Medios nacionales,La FM,Nacional,lafm.com.co
-Medios nacionales,Infobae Colombia,Nacional,infobae.com
-Medios nacionales,La República,"Nacional, económico",larepublica.co
-Medios nacionales,Portafolio,"Nacional, económico",portafolio.co
-Medios nacionales,La Silla Vacía,"Regional, análisis",lasillavacia.com
-Medios regionales,El Colombiano (Antioquia),Regional,elcolombiano.com
-Medios regionales,Minuto30 (Medellín),Regional,minuto30.com
-Medios regionales,El País (Valle),Regional,elpais.com.co
-Medios regionales,El Heraldo (Caribe),Regional,elheraldo.co
-Medios regionales,El Universal (Cartagena),Regional,eluniversal.com.co
-Medios regionales,Vanguardia (Santander),Regional,vanguardia.com
-Medios regionales,La Opinión (N. Santander),Regional,laopinion.com.co
-Medios regionales,El Nuevo Día (Tolima),Regional,elnuevodia.com.co
-Medios regionales,La Patria (Caldas),Regional,lapatria.com
-Medios regionales,Crónica del Quindío,Regional,cronicadelquindio.com
-Medios regionales,Diario del Cauca,Regional,diariodelcauca.com.co
-Medios regionales,Diario del Sur (Nariño),Regional,diariodelsur.com.co
-Medios regionales,El Informador (Magdalena),Regional,elinformador.com.co
-Medios regionales,El Nuevo Siglo,Regional,elnuevosiglo.com.co
-Medios regionales,Pulzo,Nacional,pulzo.com
-Medios regionales,Kienyke,Nacional,kienyke.com
-Medios regionales,Alerta Paisa,Regional,alertapaisa.com
-Medios regionales,Área Cúcuta,Regional,areacucuta.com
+group,source,coverage,domain,rss_url
+Policía,Policía Nacional · Sala de prensa,Nacional y regional,,
+Policía,"Policía Metropolitanas (MEBOG, MEVAL, MECAL...)",Ciudades principales,,
+Policía,Policía Nacional · Estadística delictiva (SIEDCO),"Nal., dep., municipal",,
+Policía,DIJIN · Revista Criminalidad,"Nal., departamental",,
+Ministerio de Defensa,Ministerio de Defensa Nacional,Nacional,,
+Ministerio de Defensa,Ejército Nacional,Nacional y regional,,
+Ministerio de Defensa,Divisiones del Ejército (1a a 8a),Regional,,
+Ministerio de Defensa,Fuerza Aeroespacial (FAC),Nacional,,
+Ministerio de Defensa,Armada Nacional,"Costas, ríos, fronteras",,
+Ministerio de Defensa,Comando General FF. MM.,Nacional,,
+Ministerio de Defensa,Logros de la Política de Defensa,"Nal., departamental",,
+Secretaría de seguridad,Secretaría Distrital de Seguridad · Bogotá,Bogotá y localidades,,
+Secretaría de seguridad,Alcaldía de Bogotá,Bogotá,,
+Secretaría de seguridad,Alcaldía de Medellín (SISC),Medellín,,
+Secretaría de seguridad,Alcaldía de Cali,Cali,,
+Secretaría de seguridad,Alcaldía de Barranquilla,Barranquilla,,
+Secretaría de seguridad,Alcaldía de Cartagena,Cartagena,,
+Secretaría de seguridad,Gobernación de Antioquia,Antioquia,,
+Secretaría de seguridad,Gobernación de Cundinamarca,Cundinamarca,,
+Secretaría de seguridad,Gobernación del Valle del Cauca,Valle del Cauca,,
+Secretaría de seguridad,Gobernación del Atlántico,Atlántico,,
+Secretaría de seguridad,Gobernación de Santander,Santander,,
+Secretaría de seguridad,Otras gobernaciones y alcaldías,Dep. y municipal,,
+Observatorios y fundaciones,DANE · Convivencia y Seguridad (ECSC),"Nal., 13+ ciudades",,
+Observatorios y fundaciones,Medicina Legal · Forensis,"Nal., dep., municipal",,
+Observatorios y fundaciones,Fiscalía General de la Nación,"Nal., dep., municipal",,
+Observatorios y fundaciones,Observatorio de Política Criminal · MinJusticia,"Nal., dep., municipal",,
+Observatorios y fundaciones,Portal de Datos Abiertos de Colombia,Nacional,,
+Observatorios y fundaciones,INDEPAZ,"Nacional, regional",,
+Observatorios y fundaciones,CERAC,"Nacional, regional",,
+Observatorios y fundaciones,Fundación Ideas para la Paz (FIP),"Nacional, regional",,
+Observatorios y fundaciones,Corporación Excelencia en la Justicia (CEJ),Nacional,,
+Observatorios y fundaciones,Fundación Paz y Reconciliación (Pares),"Nacional, regional",,
+Gremios y mermas,FENALCO · Censo Nacional de Mermas,"Nacional, ciudades",,
+Gremios y mermas,FENALCO · Noticias y seccionales,"Nacional, regional",,
+Gremios y mermas,ANDI,"Nacional, sectorial",,
+Gremios y mermas,FASECOLDA,Nacional,,
+Gremios y mermas,COLFECAR (transporte de carga),Corredores viales,,
+Medios nacionales,El Tiempo,"Nacional, regional",eltiempo.com,https://www.eltiempo.com/rss/justicia_delitos.xml
+Medios nacionales,El Espectador,Nacional,elespectador.com,
+Medios nacionales,Semana,Nacional,semana.com,https://semana.com/arc/outboundfeeds/rss/?outputType=xml
+Medios nacionales,RCN Radio,"Nacional, regional",rcnradio.com,
+Medios nacionales,Caracol Radio,"Nacional, regional",caracol.com.co,https://caracol.com.co/arc/outboundfeeds/rss/?outputType=xml
+Medios nacionales,Blu Radio,Nacional,bluradio.com,
+Medios nacionales,Noticias Caracol,Nacional,noticiascaracol.com,
+Medios nacionales,Noticias RCN,Nacional,noticiasrcn.com,
+Medios nacionales,W Radio,Nacional,wradio.com.co,https://wradio.com.co/arc/outboundfeeds/rss/?outputType=xml
+Medios nacionales,La FM,Nacional,lafm.com.co,
+Medios nacionales,Infobae Colombia,Nacional,infobae.com,https://www.infobae.com/arc/outboundfeeds/rss/?outputType=xml
+Medios nacionales,La República,"Nacional, económico",larepublica.co,https://larepublica.co/rss
+Medios nacionales,Portafolio,"Nacional, económico",portafolio.co,https://www.portafolio.co/rss/economia.xml
+Medios nacionales,La Silla Vacía,"Regional, análisis",lasillavacia.com,https://lasillavacia.com/rss
+Medios regionales,El Colombiano (Antioquia),Regional,elcolombiano.com,
+Medios regionales,Minuto30 (Medellín),Regional,minuto30.com,https://minuto30.com/rss
+Medios regionales,El País (Valle),Regional,elpais.com.co,https://elpais.com.co/arc/outboundfeeds/rss/?outputType=xml
+Medios regionales,El Heraldo (Caribe),Regional,elheraldo.co,https://elheraldo.co/arc/outboundfeeds/rss/?outputType=xml
+Medios regionales,El Universal (Cartagena),Regional,eluniversal.com.co,https://eluniversal.com.co/arc/outboundfeeds/rss/?outputType=xml
+Medios regionales,Vanguardia (Santander),Regional,vanguardia.com,https://vanguardia.com/arc/outboundfeeds/rss/?outputType=xml
+Medios regionales,La Opinión (N. Santander),Regional,laopinion.com.co,https://laopinion.com.co/rss.xml
+Medios regionales,El Nuevo Día (Tolima),Regional,elnuevodia.com.co,https://elnuevodia.com.co/rss.xml
+Medios regionales,La Patria (Caldas),Regional,lapatria.com,https://lapatria.com/rss.xml
+Medios regionales,Crónica del Quindío,Regional,cronicadelquindio.com,
+Medios regionales,Diario del Cauca,Regional,diariodelcauca.com.co,https://diariodelcauca.com.co/rss
+Medios regionales,Diario del Sur (Nariño),Regional,diariodelsur.com.co,https://diariodelsur.com.co/rss
+Medios regionales,El Informador (Magdalena),Regional,elinformador.com.co,
+Medios regionales,El Nuevo Siglo,Regional,elnuevosiglo.com.co,https://elnuevosiglo.com.co/rss.xml
+Medios regionales,Pulzo,Nacional,pulzo.com,
+Medios regionales,Kienyke,Nacional,kienyke.com,https://kienyke.com/feed/
+Medios regionales,Alerta Paisa,Regional,alertapaisa.com,
+Medios regionales,Área Cúcuta,Regional,areacucuta.com,https://areacucuta.com/rss
+Medios nacionales,El Tiempo - Bogota,Bogota,eltiempo.com,https://www.eltiempo.com/rss/bogota.xml
+Medios nacionales,El Tiempo - Medellin,Medellin y Antioquia,eltiempo.com,https://www.eltiempo.com/rss/colombia_medellin.xml
+Medios nacionales,El Tiempo - Cali,Cali y Valle,eltiempo.com,https://www.eltiempo.com/rss/colombia_cali.xml
+Medios nacionales,El Tiempo - Barranquilla,Barranquilla y Caribe,eltiempo.com,https://www.eltiempo.com/rss/colombia_barranquilla.xml

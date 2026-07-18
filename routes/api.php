@@ -5,11 +5,16 @@ use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\BulletinController;
+use App\Http\Controllers\Api\BulletinDispatchController;
 use App\Http\Controllers\Api\BulletinEventController;
 use App\Http\Controllers\Api\ScrapingSourceController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+
+// Disparo del envío del boletín nacional por correo (lo llama n8n con el token
+// compartido X-Dispatch-Token). El backend arma el PDF y envía a la DB.
+Route::post('/boletines/enviar-nacional', [BulletinDispatchController::class, 'sendNational']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);

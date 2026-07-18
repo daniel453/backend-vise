@@ -9,7 +9,7 @@ class ScrapingSourceSeeder extends Seeder
 {
     /**
      * Carga la matriz de fuentes (Paso 1 - Contexto) desde
-     * database/seeders/data/scraping_sources.csv (group,source,coverage,domain)
+     * database/seeders/data/scraping_sources.csv (group,source,coverage,domain,rss_url)
      * — la misma matriz que usan los flujos de n8n para armar los boletines.
      * Se vacía y recarga completa en cada corrida, para que sea el archivo CSV
      * el que manda sobre lo que quede en la tabla.
@@ -18,7 +18,7 @@ class ScrapingSourceSeeder extends Seeder
     {
         $path = database_path('seeders/data/scraping_sources.csv');
         $handle = fopen($path, 'r');
-        $header = fgetcsv($handle); // group,source,coverage,domain
+        $header = fgetcsv($handle); // group,source,coverage,domain,rss_url
 
         $rows = [];
         $sortOrder = 0;
@@ -28,6 +28,7 @@ class ScrapingSourceSeeder extends Seeder
                 'source' => $line[1],
                 'coverage' => $line[2] !== '' ? $line[2] : null,
                 'domain' => $line[3] !== '' ? $line[3] : null,
+                'rss_url' => ($line[4] ?? '') !== '' ? $line[4] : null,
                 'sort_order' => $sortOrder++,
                 'created_at' => now(),
                 'updated_at' => now(),

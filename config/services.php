@@ -39,4 +39,10 @@ return [
         'key' => env('OPENAI_API_KEY'),
         'model' => env('OPENAI_MODEL', 'gpt-5.6-luna'),
     ],
+
+    // Token compartido que debe enviar n8n para disparar el envío del boletín
+    // nacional por correo (evita que cualquiera dispare el envío masivo).
+    'bulletin_dispatch' => [
+        'token' => env('BULLETIN_DISPATCH_TOKEN'),
+    ],
 ];
