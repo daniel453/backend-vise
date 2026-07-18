@@ -47,7 +47,7 @@ Medios nacionales,Noticias Caracol,Nacional,noticiascaracol.com,
 Medios nacionales,Noticias RCN,Nacional,noticiasrcn.com,
 Medios nacionales,W Radio,Nacional,wradio.com.co,https://wradio.com.co/arc/outboundfeeds/rss/?outputType=xml
 Medios nacionales,La FM,Nacional,lafm.com.co,
-Medios nacionales,Infobae Colombia,Nacional,infobae.com,https://www.infobae.com/arc/outboundfeeds/rss/?outputType=xml
+Medios nacionales,Infobae Colombia,Nacional,infobae.com,
 Medios nacionales,La República,"Nacional, económico",larepublica.co,https://larepublica.co/rss
 Medios nacionales,Portafolio,"Nacional, económico",portafolio.co,https://www.portafolio.co/rss/economia.xml
 Medios nacionales,La Silla Vacía,"Regional, análisis",lasillavacia.com,https://lasillavacia.com/rss
@@ -59,7 +59,7 @@ Medios regionales,El Universal (Cartagena),Regional,eluniversal.com.co,https://e
 Medios regionales,Vanguardia (Santander),Regional,vanguardia.com,https://vanguardia.com/arc/outboundfeeds/rss/?outputType=xml
 Medios regionales,La Opinión (N. Santander),Regional,laopinion.com.co,https://laopinion.com.co/rss.xml
 Medios regionales,El Nuevo Día (Tolima),Regional,elnuevodia.com.co,https://elnuevodia.com.co/rss.xml
-Medios regionales,La Patria (Caldas),Regional,lapatria.com,https://lapatria.com/rss.xml
+Medios regionales,La Patria (Caldas),Regional,lapatria.com,
 Medios regionales,Crónica del Quindío,Regional,cronicadelquindio.com,
 Medios regionales,Diario del Cauca,Regional,diariodelcauca.com.co,https://diariodelcauca.com.co/rss
 Medios regionales,Diario del Sur (Nariño),Regional,diariodelsur.com.co,https://diariodelsur.com.co/rss
@@ -73,3 +73,9 @@ Medios nacionales,El Tiempo - Bogota,Bogota,eltiempo.com,https://www.eltiempo.co
 Medios nacionales,El Tiempo - Medellin,Medellin y Antioquia,eltiempo.com,https://www.eltiempo.com/rss/colombia_medellin.xml
 Medios nacionales,El Tiempo - Cali,Cali y Valle,eltiempo.com,https://www.eltiempo.com/rss/colombia_cali.xml
 Medios nacionales,El Tiempo - Barranquilla,Barranquilla y Caribe,eltiempo.com,https://www.eltiempo.com/rss/colombia_barranquilla.xml
+Medios regionales,Diario de Casanare,Casanare y Yopal,diariodecasanare.com,https://diariodecasanare.com/feed/
+Medios regionales,El Diario del Llano,Meta Casanare Arauca,eldiariodelllano.com,https://eldiariodelllano.com/feed/
+Medios regionales,Llano al Mundo,Meta y Villavicencio,llanoalmundo.com,https://llanoalmundo.com/feed/
+Medios regionales,Prensa Libre Casanare,Casanare y Yopal,prensalibrecasanare.com,https://prensalibrecasanare.com/rss.xml
+Medios regionales,Conexion Putumayo,Putumayo,conexionputumayo.com,https://conexionputumayo.com/feed/
+Medios regionales,The Archipielago Press,San Andres,thearchipielagopress.co,https://thearchipielagopress.co/feed/
