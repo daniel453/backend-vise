@@ -1,0 +1,53 @@
+label,feed_type,query,url,category,active,sort_order
+Bogotá seguridad movilidad noticias,google_news,Bogotá seguridad movilidad noticias,,vial,true,0
+Caribe Colombiano Barranquilla Cartagena,google_news,Caribe Colombiano Barranquilla Cartagena seguridad,,orden_publico,true,1
+ELN Colombia combate operativo,google_news,ELN Colombia combate operativo,,grupos_armados,true,2
+FARC disidencias Colombia,google_news,FARC disidencias Colombia,,grupos_armados,true,3
+TransMilenio cierres rutas novedades Bog,google_news,TransMilenio cierres rutas novedades Bogotá,,vial,true,4
+accidente vial carretera colombia,google_news,accidente vial carretera colombia,,vial,true,5
+accidentes de tránsito Colombia vías mov,google_news,accidentes de tránsito Colombia vías movilidad,,vial,true,6
+arauca conflicto armado,google_news,arauca conflicto armado,,orden_publico,true,7
+armada colombia operativo incautación,google_news,armada colombia operativo incautación,,operativos,true,8
+bajo cauca antioquia violencia,google_news,bajo cauca antioquia violencia,,orden_publico,true,9
+bloqueo vial bogota,google_news,bloqueo vial bogota,,vial,true,10
+bloqueo vial protesta colombia,google_news,bloqueo vial protesta colombia,,vial,true,11
+catatumbo norte de santander,google_news,catatumbo norte de santander,,orden_publico,true,12
+cauca conflicto armado indígenas,google_news,cauca conflicto armado indígenas,,orden_publico,true,13
+chocó conflicto armado,google_news,chocó conflicto armado,,orden_publico,true,14
+cierre vial carretera colombia,google_news,cierre vial carretera colombia,,vial,true,15
+cierre vías Colombia plan retorno accide,google_news,cierre vías Colombia plan retorno accidente carretera,,vial,true,16
+cierres viales manifestaciones Colombia ,google_news,cierres viales manifestaciones Colombia bloqueos,,vial,true,17
+clan del golfo bacrim Colombia,google_news,clan del golfo bacrim Colombia,,grupos_armados,true,18
+congreso Colombia debates políticos 2025,google_news,congreso Colombia debates políticos 2025,,electoral,true,19
+deslizamiento vía colombia,google_news,deslizamiento vía colombia,,ambiental,true,20
+desplazamiento forzado Colombia,google_news,desplazamiento forzado Colombia,,grupos_armados,true,21
+dijin sijin colombia captura,google_news,dijin sijin colombia captura,,operativos,true,22
+disturbios protestas Colombia manifestac,google_news,disturbios protestas Colombia manifestaciones violencia,,protesta,true,23
+ejército colombia operativo captura,google_news,ejército colombia operativo captura,,operativos,true,24
+elecciones Colombia 2026 política campañ,google_news,elecciones Colombia 2026 política campaña,,electoral,true,25
+extorsión vacuna criminal Colombia,google_news,extorsión vacuna criminal Colombia,,grupos_armados,true,26
+fiscalia colombia captura imputado,google_news,fiscalia colombia captura imputado,,operativos,true,27
+gestión riesgo evacuación colombia,google_news,gestión riesgo evacuación colombia,,ambiental,true,28
+homicidio sicariato Colombia,google_news,homicidio sicariato Colombia,,orden_publico,true,29
+hurto atraco fleteo Colombia,google_news,hurto atraco fleteo Colombia,,orden_publico,true,30
+ideam alerta inundación colombia,google_news,ideam alerta inundación colombia,,ambiental,true,31
+inundación emergencia colombia,google_news,inundación emergencia colombia,,ambiental,true,32
+invias via cerrada derrumbe colombia,google_news,invias via cerrada derrumbe colombia,,vial,true,33
+manifestaciones Colombia protestas socia,google_news,manifestaciones Colombia protestas sociales paro,,protesta,true,34
+manifestaciones paro colombia,google_news,manifestaciones paro colombia,,protesta,true,35
+masacre Colombia,google_news,masacre Colombia,,grupos_armados,true,36
+mina antipersona campo minado Colombia,google_news,mina antipersona campo minado Colombia,,grupos_armados,true,37
+movilidad Bogotá accidentes viales cierr,google_news,movilidad Bogotá accidentes viales cierres,,vial,true,38
+movilizaciones sociales Colombia bloqueo,google_news,movilizaciones sociales Colombia bloqueos vías,,vial,true,39
+narcotráfico coca laboratorio Colombia,google_news,narcotráfico coca laboratorio Colombia,,grupos_armados,true,40
+orden público Antioquia Medellín segurid,google_news,orden público Antioquia Medellín seguridad,,orden_publico,true,41
+orden público Valle del Cauca Cali notic,google_news,orden público Valle del Cauca Cali noticias,,orden_publico,true,42
+paro armado bloqueo armado Colombia,google_news,paro armado bloqueo armado Colombia,,grupos_armados,true,43
+paro arrocero Colombia bloqueos vías 202,google_news,paro arrocero Colombia bloqueos vías 2025,,vial,true,44
+policía nacional colombia operativo,google_news,policía nacional colombia operativo,,operativos,true,45
+protestas bloqueos colombia,google_news,protestas bloqueos colombia,,protesta,true,46
+putumayo nariño conflicto,google_news,putumayo nariño conflicto,,orden_publico,true,47
+secuestro Colombia 2025,google_news,secuestro Colombia 2025,,grupos_armados,true,48
+sismo terremoto colombia,google_news,sismo terremoto colombia,,ambiental,true,49
+urabá antioquia violencia,google_news,urabá antioquia violencia,,orden_publico,true,50
+vendaval emergencia colombia,google_news,vendaval emergencia colombia,,ambiental,true,51

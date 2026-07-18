@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             DepartamentSeeder::class,
             CitySeeder::class,
             ScrapingSourceSeeder::class,
+            BulletinFeedSeeder::class,
         ]);
     }
 }
