@@ -59,6 +59,13 @@
   $topEvents = $securityEvents->take(5);
   $restantes = $securityEvents->count() - $topEvents->count();
   $tieneRecs = $bulletin->logistics_recommendation || $bulletin->perimeter_recommendation || $bulletin->operational_recommendation || $bulletin->digital_recommendation;
+  // Conclusión sintetizada (para scopes sin conclusión propia de la IA).
+  $conclSynth = 'Tendencia <b style="color:#B91C1C">'.e($bulletin->trend ?? '—').'</b>.';
+  if ($bulletin->critical_zone) { $conclSynth .= ' Zona crítica: <b>'.e($bulletin->critical_zone).'</b>.'; }
+  $conclSynth .= ' '.$bulletin->total_events.' evento(s), '.$bulletin->critical_events.' crítico(s)';
+  if ($stats['roads']) { $conclSynth .= ' · '.$stats['roads'].' vía(s) afectada(s)'; }
+  if ($stats['environmental']) { $conclSynth .= ' · '.$stats['environmental'].' alerta(s) ambiental(es)'; }
+  $conclSynth .= '.';
 @endphp
 
 <div class="header">
@@ -84,11 +91,7 @@
     <div class="concl-b" style="font-size:11px;line-height:1.5;">{{ $bulletin->conclusion }}</div>
   @else
     <div class="concl-t">{{ $bulletin->main_threat ?? $bulletin->headline ?? 'Panorama de seguridad del día' }}</div>
-    <div class="concl-b">
-      Tendencia <b style="color:#B91C1C">{{ $bulletin->trend ?? '—' }}</b>.
-      @if($bulletin->critical_zone) Zona crítica: <b>{{ $bulletin->critical_zone }}</b>.@endif
-      {{ $bulletin->total_events }} evento(s), {{ $bulletin->critical_events }} crítico(s)@if($stats['roads']) · {{ $stats['roads'] }} vía(s) afectada(s)@endif@if($stats['environmental']) · {{ $stats['environmental'] }} alerta(s) ambiental(es)@endif.
-    </div>
+    <div class="concl-b">{!! $conclSynth !!}</div>
   @endif
 </div>
 
