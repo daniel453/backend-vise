@@ -65,6 +65,9 @@
   $restantes = $securityEvents->count() - $topEvents->count();
   $tieneRecs = $bulletin->logistics_recommendation || $bulletin->perimeter_recommendation || $bulletin->operational_recommendation || $bulletin->digital_recommendation;
   $distTitle = ['region'=>'Distribución por región','departamento'=>'Distribución por departamento','municipio'=>'Distribución por municipio'][$childLevelSlug] ?? 'Distribución';
+  // Enlace al boletín completo en la plataforma (usa el host de la petición).
+  $slugMap = ['national'=>'nacional','region'=>'region','department'=>'departamento','municipality'=>'municipio'];
+  $platformUrl = route('boletin', ['level'=>($slugMap[$scopeLevel] ?? 'nacional'), 'scope'=>$scopeLevel==='national'?null:$scope]);
   // Conclusión sintetizada (cuando no hay conclusión propia de la IA).
   $conclSynth = 'Tendencia <b style="color:#B91C1C">'.e($bulletin->trend ?? '—').'</b>.';
   if ($bulletin->critical_zone) { $conclSynth .= ' Zona crítica: <b>'.e($bulletin->critical_zone).'</b>.'; }
@@ -119,7 +122,7 @@
           <div class="evento evento-d">Sin eventos de seguridad reportados.</div>
         @endforelse
         @if($restantes > 0)
-          <div class="more">+ {{ $restantes }} evento(s) más. Detalle completo en la plataforma.</div>
+          <div class="more">+ {{ $restantes }} evento(s) más. <a href="{{ $platformUrl }}" style="color:#2851A3;text-decoration:underline;">Ver el detalle completo en la plataforma</a>.</div>
         @endif
       </div>
 
@@ -169,7 +172,8 @@
 </table>
 
 <div class="footer">
-  Documento de Inteligencia · VISE-ALTUM · Generado {{ \Illuminate\Support\Carbon::parse($bulletin->generated_at)->format('d/m/Y H:i') }}
+  <a href="{{ $platformUrl }}" style="color:#2851A3;text-decoration:underline;font-weight:bold;">Ver el boletín completo y todos los eventos en la plataforma →</a>
+  <br>Documento de Inteligencia · VISE-ALTUM · Generado {{ \Illuminate\Support\Carbon::parse($bulletin->generated_at)->format('d/m/Y H:i') }}
   <br><b>CONFIDENCIAL · RESERVADO</b>
 </div>
 </body>
