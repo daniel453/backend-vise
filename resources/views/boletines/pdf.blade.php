@@ -26,7 +26,7 @@
 
   .cols { width: 100%; border-collapse: collapse; margin-top: 10px; }
   .cols > tbody > tr > td { vertical-align: top; }
-  .col-l { width: 57%; padding-right: 9px; }
+  .col-l { width: 50%; padding-right: 9px; }
   .col-r { width: 43%; padding-left: 9px; }
 
   .bar { background: #0A2540; color: #fff; padding: 7px 12px; font-size: 9.5px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; border-radius: 5px 5px 0 0; }
