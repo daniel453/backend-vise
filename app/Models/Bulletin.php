@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
 #[Fillable([
-    'batch_id', 'scope_level', 'scope', 'department', 'region', 'mode', 'headline', 'total_events',
+    'batch_id', 'scope_level', 'scope', 'department', 'region', 'mode', 'headline', 'conclusion', 'total_events',
     'critical_events', 'high_impact_events', 'regions_affected', 'roads_affected',
     'electoral_events', 'main_threat', 'critical_zone', 'trend', 'sources_consulted',
     'electoral_context', 'logistics_recommendation', 'perimeter_recommendation',
