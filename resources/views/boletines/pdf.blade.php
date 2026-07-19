@@ -61,7 +61,7 @@
 @php
   $levelLabel = ['national'=>'NACIONAL','region'=>'REGIÓN','department'=>'DEPARTAMENTO','municipality'=>'MUNICIPIO'][$scopeLevel] ?? strtoupper($scopeLevel);
   $sevClass = fn($s) => ['CRÍTICO'=>'tag-critico','ALTO'=>'tag-alto','MEDIO'=>'tag-medio','BAJO'=>'tag-bajo'][$s] ?? 'tag-bajo';
-  $topEvents = $securityEvents->take(6);
+  $topEvents = $securityEvents->take(4);
   $restantes = $securityEvents->count() - $topEvents->count();
   $tieneRecs = $bulletin->logistics_recommendation || $bulletin->perimeter_recommendation || $bulletin->operational_recommendation || $bulletin->digital_recommendation;
   $distTitle = ['region'=>'Distribución por región','departamento'=>'Distribución por departamento','municipio'=>'Distribución por municipio'][$childLevelSlug] ?? 'Distribución';
