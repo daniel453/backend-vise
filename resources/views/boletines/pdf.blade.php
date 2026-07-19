@@ -19,24 +19,24 @@
   .stat-l { font-size: 8px; color: #64748B; text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
   .n-red { color: #B91C1C; } .n-orange { color: #E8750A; } .n-blue { color: #2851A3; } .n-green { color: #16A34A; }
 
-  .concl { border: 1px solid #E2E8F0; border-left: 5px solid #B91C1C; border-radius: 7px; padding: 10px 14px; margin-top: 10px; }
+  .concl { border: 1px solid #E2E8F0; border-left: 5px solid #B91C1C; border-radius: 7px; padding: 12px 15px; margin-top: 13px; }
   .lbl { font-size: 8px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; color: #64748B; }
   .concl-t { font-size: 14px; font-weight: bold; color: #0A2540; margin: 4px 0; }
   .concl-b { font-size: 11px; color: #334155; }
 
-  .cols { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .cols { width: 100%; border-collapse: collapse; margin-top: 13px; }
   .cols > tbody > tr > td { vertical-align: top; }
-  .col-l { width: 50%; padding-right: 9px; }
+  .col-l { width: 57%; padding-right: 9px; }
   .col-r { width: 43%; padding-left: 9px; }
 
   .bar { background: #0A2540; color: #fff; padding: 7px 12px; font-size: 9.5px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; border-radius: 5px 5px 0 0; }
   .bar.env { background: #0A3D2E; }
   .box { border: 1px solid #E2E8F0; border-top: none; border-radius: 0 0 5px 5px; }
   .box + .bar { margin-top: 12px; }
-  .evento { padding: 5px 11px; border-bottom: 1px solid #EDF1F7; }
+  .evento { padding: 6px 11px; border-bottom: 1px solid #EDF1F7; }
   .evento:last-child { border-bottom: none; }
-  .evento-t { font-size: 11px; font-weight: bold; color: #0A2540; white-space: nowrap; overflow: hidden; }
-  .evento-d { font-size: 9.5px; color: #475569; margin: 3px 0 4px; white-space: nowrap; overflow: hidden; }
+  .evento-t { font-size: 11px; font-weight: bold; color: #0A2540; }
+  .evento-d { font-size: 9.5px; color: #475569; margin: 3px 0 4px; }
   .tag { display: inline-block; font-size: 7.5px; font-weight: bold; padding: 2px 7px; border-radius: 10px; text-transform: uppercase; margin-right: 3px; }
   .tag-critico { background: #FEE2E2; color: #991B1B; } .tag-alto { background: #FFEDD5; color: #9A3412; }
   .tag-medio { background: #DBEAFE; color: #1E40AF; } .tag-bajo { background: #F1F5F9; color: #475569; }
@@ -44,16 +44,16 @@
   .more { padding: 7px 11px; font-size: 9px; color: #64748B; font-style: italic; }
 
   .pad { border: 1px solid #E2E8F0; border-top: none; border-radius: 0 0 5px 5px; padding: 10px 12px; }
-  .rec { font-size: 10px; color: #334155; margin-bottom: 7px; white-space: nowrap; overflow: hidden; }
+  .rec { font-size: 10px; color: #334155; margin-bottom: 7px; }
   .rec:last-child { margin-bottom: 0; }
   .rec b { color: #0A2540; }
-  .tacrow { font-size: 9.5px; color: #334155; margin-bottom: 5px; white-space: nowrap; overflow: hidden; }
+  .tacrow { font-size: 9.5px; color: #334155; margin-bottom: 5px; }
   .tacrow b { color: #0A2540; }
   .dist { display: block; padding: 5px 12px; border-bottom: 1px dashed #E2E8F0; font-size: 10px; color: #334155; }
   .dist:last-child { border-bottom: none; }
   .dist .n { font-weight: bold; color: #E8750A; float: right; }
 
-  .footer { margin-top: 10px; text-align: center; font-size: 8.5px; color: #64748B; }
+  .footer { margin-top: 14px; text-align: center; font-size: 8.5px; color: #64748B; }
   .footer b { color: #B91C1C; letter-spacing: 1px; }
 </style>
 </head>
@@ -61,7 +61,7 @@
 @php
   $levelLabel = ['national'=>'NACIONAL','region'=>'REGIÓN','department'=>'DEPARTAMENTO','municipality'=>'MUNICIPIO'][$scopeLevel] ?? strtoupper($scopeLevel);
   $sevClass = fn($s) => ['CRÍTICO'=>'tag-critico','ALTO'=>'tag-alto','MEDIO'=>'tag-medio','BAJO'=>'tag-bajo'][$s] ?? 'tag-bajo';
-  $topEvents = $securityEvents->take(4);
+  $topEvents = $securityEvents->take(5);
   $restantes = $securityEvents->count() - $topEvents->count();
   $tieneRecs = $bulletin->logistics_recommendation || $bulletin->perimeter_recommendation || $bulletin->operational_recommendation || $bulletin->digital_recommendation;
   $distTitle = ['region'=>'Distribución por región','departamento'=>'Distribución por departamento','municipio'=>'Distribución por municipio'][$childLevelSlug] ?? 'Distribución';
@@ -81,7 +81,7 @@
   <div class="brand">VISE · Monitoreo Estratégico — {{ $levelLabel }}</div>
   <div class="scope">{{ $scope }}</div>
   <div class="datetime">{{ \Illuminate\Support\Carbon::parse($bulletin->generated_at)->format('d/m/Y · H:i') }}</div>
-  @if($bulletin->headline)<div class="headline">{{ \Illuminate\Support\Str::limit($bulletin->headline, 80) }}</div>@endif
+  @if($bulletin->headline)<div class="headline">{{ $bulletin->headline }}</div>@endif
 </div>
 
 <table class="stats">
@@ -97,7 +97,7 @@
 <div class="concl">
   <div class="lbl">Conclusión</div>
   @if($bulletin->conclusion)
-    <div class="concl-b" style="font-size:11.5px;">{{ \Illuminate\Support\Str::limit($bulletin->conclusion, 240) }}</div>
+    <div class="concl-b" style="font-size:11.5px;">{{ \Illuminate\Support\Str::limit($bulletin->conclusion, 280) }}</div>
   @else
     <div class="concl-t">{{ $bulletin->main_threat ?? $bulletin->headline ?? 'Panorama de seguridad del día' }}</div>
     <div class="concl-b">{!! $conclSynth !!}</div>
@@ -111,8 +111,8 @@
       <div class="box">
         @forelse($topEvents as $e)
           <div class="evento">
-            <div class="evento-t">{{ \Illuminate\Support\Str::limit($e->title, 68) }}</div>
-            @if($e->summary)<div class="evento-d">{{ \Illuminate\Support\Str::limit($e->summary, 95) }}</div>@endif
+            <div class="evento-t">{{ $e->title }}</div>
+            @if($e->summary)<div class="evento-d">{{ \Illuminate\Support\Str::limit($e->summary, 105) }}</div>@endif
             <div>
               @if($e->severity)<span class="tag {{ $sevClass($e->severity) }}">{{ $e->severity }}</span>@endif
               @if($e->municipality || $e->department)<span class="tag tag-geo">{{ $e->municipality ? $e->municipality.', ' : '' }}{{ $e->department }}</span>@endif
