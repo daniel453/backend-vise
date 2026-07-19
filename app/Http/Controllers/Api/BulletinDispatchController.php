@@ -65,9 +65,24 @@ class BulletinDispatchController extends Controller
             if ($alreadyToday) {
                 return response()->json(['ok' => true, 'sent' => 0, 'skipped' => 'ya se envió hoy (envío diario)']);
             }
+        } else {
+            // Fecha especial: cada N horas (no en cada corrida de 2h). Se salta si
+            // el último envío de hoy fue hace menos de (N-1) horas — el workflow
+            // corre cada 2h, así que con N=4 envía a las 6, 10, 14, 18, 22.
+            $intervalHours = (int) config('services.bulletin_dispatch.special_interval_hours', 4);
+            $last = ReportDispatchLog::query()
+                ->where('scope_level', 'national')
+                ->whereDate('dispatch_date', $today)
+                ->latest('sent_at')->first();
+
+            if ($last && $last->sent_at) {
+                $elapsedMin = ($now->timestamp - $last->sent_at->timestamp) / 60;
+                if ($elapsedMin < ($intervalHours * 60 - 60)) {
+                    return response()->json(['ok' => true, 'sent' => 0, 'skipped' => "fecha especial: envío cada {$intervalHours}h (aún no toca)"]);
+                }
+            }
         }
-        // Fecha especial: envía en cada corrida a partir de la hora de inicio (cada
-        // 2h). El dedup por batch_id (más arriba) evita reenviar el mismo boletín.
+        // El dedup por batch_id (más arriba) evita reenviar el mismo boletín.
 
         $recipients = ReportRecipient::query()
             ->where('scope_level', 'national')

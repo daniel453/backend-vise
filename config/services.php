@@ -48,8 +48,11 @@ return [
         'mailer' => env('BULLETIN_DISPATCH_MAILER', 'smtp'),
         // Hora de INICIO (Colombia). Nunca se envía antes de esta hora. En días
         // normales se envía UNA vez al día a partir de aquí; en fechas especiales
-        // (tabla dispatch_special_dates) se envía CADA 2H desde esta hora.
+        // se envía cada N horas desde esta hora.
         'daily_hour' => (int) env('BULLETIN_DISPATCH_DAILY_HOUR', 8),
+        // En fechas especiales: cada cuántas horas se envía (default 4). El
+        // workflow corre cada 2h; el backend solo envía cuando toca el intervalo.
+        'special_interval_hours' => (int) env('BULLETIN_DISPATCH_SPECIAL_INTERVAL_HOURS', 4),
         'timezone' => env('BULLETIN_DISPATCH_TZ', 'America/Bogota'),
     ],
 ];
