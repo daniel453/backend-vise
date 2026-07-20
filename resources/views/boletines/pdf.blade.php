@@ -81,6 +81,7 @@
   .flash-title { font-size: 9px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; }
   .flash-badge { font-size: 8px; font-weight: bold; letter-spacing: 1px; color: rgba(255,255,255,0.6); text-align: right; white-space: nowrap; }
   .flash.env { background: #0A3D2E; }
+  .flash.march { background: #4C1D95; }
 
   /* Eventos */
   .evento { padding: 5px 2px 5px 0; border-bottom: 1px solid #E5EAF2; }
@@ -212,8 +213,8 @@
         <div class="stat-bar"><div class="stat-bar-fill" style="width:{{ $barW($stats['vias'],15) }}%;background:#E8750A;"></div></div>
       </td>
       <td>
-        <div class="stat-n purple">{{ $stats['transmilenio'] }}</div><div class="stat-l">TransMilenio</div>
-        <div class="stat-bar"><div class="stat-bar-fill" style="width:{{ $barW($stats['transmilenio'],30) }}%;background:#7C3AED;"></div></div>
+        <div class="stat-n purple">{{ $stats['marchas'] }}</div><div class="stat-l">Marchas</div>
+        <div class="stat-bar"><div class="stat-bar-fill" style="width:{{ $barW($stats['marchas'],20) }}%;background:#7C3AED;"></div></div>
       </td>
       <td>
         <div class="stat-n green">{{ $stats['ambientales'] }}</div><div class="stat-l">Ambientales</div>
@@ -279,6 +280,25 @@
                 <td class="min-sev"><span class="dot dot-{{ in_array($sv,['CRÍTICO','CRITICO']) ? 'critico' : ($sv==='ALTO' ? 'alto' : ($sv==='MEDIO' ? 'medio' : 'bajo')) }}"></span></td>
                 <td class="min-t">{{ $e['titulo'] }}@if($e['geo'])<span class="min-geo"> · {{ $e['geo'] }}</span>@endif</td>
                 <td class="min-tag"><span class="tag tag-{{ in_array($sv,['CRÍTICO','CRITICO']) ? 'critico' : ($sv==='ALTO' ? 'alto' : ($sv==='MEDIO' ? 'medio' : 'bajo')) }}">{{ $e['severidad'] }}</span></td>
+              </tr>
+            @endforeach
+          </table>
+        @endif
+
+        @if(count($marchas))
+          <table class="flash march" style="margin-top:14px;">
+            <tr>
+              <td class="flash-title">Marchas y Movilizaciones</td>
+              <td class="flash-badge">✊ {{ $stats['marchas'] }} movilización(es)</td>
+            </tr>
+          </table>
+          <table class="minlist">
+            @foreach($marchas as $m)
+              @php $sv = mb_strtoupper($m['severidad']); @endphp
+              <tr>
+                <td class="min-sev"><span class="dot" style="background:#7C3AED;"></span></td>
+                <td class="min-t">{{ $m['titulo'] }}@if($m['geo'])<span class="min-geo"> · {{ $m['geo'] }}</span>@endif</td>
+                <td class="min-tag"><span class="tag" style="background:#7C3AED;color:#fff;">{{ in_array($sv,['CRÍTICO','CRITICO','ALTO','MEDIO','BAJO']) ? $m['severidad'] : 'MARCHA' }}</span></td>
               </tr>
             @endforeach
           </table>

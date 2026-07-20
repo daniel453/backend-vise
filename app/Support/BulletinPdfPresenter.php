@@ -33,7 +33,8 @@ class BulletinPdfPresenter
     ];
 
     public const MAX_FEATURED = 3;      // eventos con descripción
-    public const MAX_COMPACT = 4;       // resto como una línea (siguen en el boletín)
+    public const MAX_COMPACT = 3;       // resto como una línea (siguen en el boletín)
+    public const MAX_MARCHAS = 4;       // marchas / movilizaciones (una línea c/u)
     public const MAX_ALERTAS = 2;
     public const MAX_DISTRIBUCION = 5;
 
@@ -97,10 +98,34 @@ class BulletinPdfPresenter
             $distribucion[] = ['nombre' => 'Otras', 'eventos' => $total - $mostrado];
         }
 
+        // --- Marchas / movilizaciones: se separan de seguridad para tener sección propia ---
+        // (día de paro/marchas es crítico y debe verse aparte). Se detectan por subtipo/título.
+        $esMarcha = fn ($e) => (bool) preg_match(
+            '/marcha|movilizaci|manifestaci|protesta|plant[oó]n|paro\b|cacerol|bloqueo\s+(?:por|de)\s+manifest/iu',
+            (string) $e->subtype . ' ' . (string) $e->title
+        );
+
+        $marchasCol = $v['securityEvents']->filter($esMarcha)
+            ->sortBy(fn ($e) => self::SEV_RANK[mb_strtoupper((string) $e->severity)] ?? 9)
+            ->values();
+
+        $marchas = $marchasCol->take(self::MAX_MARCHAS)->map(function ($e) {
+            $sev = mb_strtoupper((string) $e->severity);
+
+            return [
+                'titulo' => self::smart($e->title, self::LIMIT['evento_compacto']),
+                'severidad' => $e->severity ?: 'MARCHA',
+                'esCritico' => in_array($sev, ['CRÍTICO', 'CRITICO'], true),
+                'geo' => trim(($e->municipality ? $e->municipality . ', ' : '') . ($e->department ?? ''), ', '),
+            ];
+        })->values()->all();
+
         // --- Estrategia de eventos: TODOS quedan en el boletín (nada redirige) ---
         // Ordenados por severidad, los primeros van "destacados" (con descripción)
         // y el resto en una lista compacta de una línea. Así entra en una página.
+        // Las marchas ya tienen su sección: se excluyen de aquí para no duplicarlas.
         $seguridad = $v['securityEvents']
+            ->reject($esMarcha)
             ->sortBy(fn ($e) => self::SEV_RANK[mb_strtoupper((string) $e->severity)] ?? 9)
             ->values();
 
@@ -166,7 +191,8 @@ class BulletinPdfPresenter
             ],
             'stats' => [
                 'total' => $total,
-                'criticos' => $seguridad->filter(fn ($e) => in_array(mb_strtoupper((string) $e->severity), ['CRÍTICO', 'CRITICO'], true))->count(),
+                'criticos' => $v['securityEvents']->filter(fn ($e) => in_array(mb_strtoupper((string) $e->severity), ['CRÍTICO', 'CRITICO'], true))->count(),
+                'marchas' => $marchasCol->count(),
                 'areas' => $porRegion->keys()->reject(fn ($k) => $k === 'Sin ubicación')->count(),
                 'vias' => $v['trafficTm']->count() + $v['trafficOther']->count(),
                 'transmilenio' => $v['trafficTm']->count(),
@@ -174,6 +200,7 @@ class BulletinPdfPresenter
             ],
             'eventos' => $eventos,
             'eventosCompactos' => $eventosCompactos,
+            'marchas' => $marchas,
             'recomendaciones' => $recomendaciones,
             'ambientales' => $ambientales,
             'distribucion' => $distribucion,
