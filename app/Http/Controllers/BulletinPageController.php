@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bulletin;
 use App\Services\BulletinReportService;
+use App\Support\BulletinPdfPresenter;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -56,6 +57,6 @@ class BulletinPageController extends Controller
         $suffix = ($scope && $data['scopeLevel'] !== 'national') ? '-'.Str::slug($scope) : '';
         $filename = 'boletin-'.$level.$suffix.'.pdf';
 
-        return Pdf::loadView('boletines.pdf', $data)->setPaper('a4')->stream($filename);
+        return Pdf::loadView('boletines.pdf', (new BulletinPdfPresenter)->present($data))->setPaper('a4')->stream($filename);
     }
 }

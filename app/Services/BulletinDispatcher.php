@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\NationalBulletinMail;
 use App\Models\ReportDispatchLog;
+use App\Support\BulletinPdfPresenter;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -29,7 +30,7 @@ class BulletinDispatcher
             return ['ok' => false, 'error' => 'no_bulletin'];
         }
 
-        $pdf = Pdf::loadView('boletines.pdf', $view)->setPaper('a4')->output();
+        $pdf = Pdf::loadView('boletines.pdf', (new BulletinPdfPresenter)->present($view))->setPaper('a4')->output();
         $dateLabel = Carbon::parse($view['bulletin']->generated_at)->format('d/m/Y');
         $mailer = config('services.bulletin_dispatch.mailer', 'smtp');
 
