@@ -98,14 +98,17 @@ class BulletinPdfPresenter
             $distribucion[] = ['nombre' => 'Otras', 'eventos' => $total - $mostrado];
         }
 
-        // --- Marchas / movilizaciones: se separan de seguridad para tener sección propia ---
-        // (día de paro/marchas es crítico y debe verse aparte). Se detectan por subtipo/título.
+        // --- Marchas / movilizaciones: se separan para tener sección propia ---
+        // (día de paro/marchas es crítico y debe verse aparte). Se detectan por
+        // subtipo/título tanto en ORDEN PÚBLICO como en VÍAS (bloqueos por protesta),
+        // que es donde la IA suele clasificarlas.
         $esMarcha = fn ($e) => (bool) preg_match(
-            '/marcha|movilizaci|manifestaci|protesta|plant[oó]n|paro\b|cacerol|bloqueo\s+(?:por|de)\s+manifest/iu',
-            (string) $e->subtype . ' ' . (string) $e->title
+            '/\bmarchas?\b|movilizaci|manifestaci|\bprotestas?\b|disturbio|plant[oó]n|cacerol|\bparos?\b/iu',
+            (string) $e->subtype . ' ' . (string) $e->title . ' ' . (string) $e->summary
         );
 
         $marchasCol = $v['securityEvents']->filter($esMarcha)
+            ->concat($v['trafficOther']->filter($esMarcha))
             ->sortBy(fn ($e) => self::SEV_RANK[mb_strtoupper((string) $e->severity)] ?? 9)
             ->values();
 
