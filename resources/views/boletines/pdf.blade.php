@@ -73,7 +73,7 @@
   .card.blue { border-top: 3px solid #2851A3; }
   .card-lbl { font-size: 7px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; color: #6B7280; margin-bottom: 4px; }
   .card-title { font-size: 11px; font-weight: bold; color: #1B2A4A; line-height: 1.2; padding-bottom: 4px; margin-bottom: 4px; border-bottom: 1px solid #E5EAF2; }
-  .card-body { font-size: 9px; color: #374151; line-height: 1.45; }
+  .card-body { font-size: 8.5px; color: #374151; line-height: 1.4; }
 
   /* Flash bar (encabezado de sección) */
   .flash { width: 100%; background: #1B2A4A; color: #fff; border-collapse: collapse; }
@@ -88,7 +88,7 @@
   .evento.crit { background: #FFF5F5; border-left: 3px solid #E8192C; padding-left: 9px; }
   .evento-t { font-size: 11px; font-weight: bold; color: #1B2A4A; line-height: 1.2; }
   .evento.crit .evento-t { color: #B01023; }
-  .evento-d { font-size: 9px; color: #374151; line-height: 1.45; margin: 2px 0 4px; }
+  .evento-d { font-size: 8.5px; color: #374151; line-height: 1.4; margin: 2px 0 4px; }
   .tag { display: inline-block; font-size: 7px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; padding: 2px 7px; margin-right: 4px; }
   .tag-critico { background: #E8192C; color: #fff; }
   .tag-alto { background: #E8750A; color: #fff; }

@@ -14,21 +14,26 @@ use Illuminate\Support\Carbon;
  */
 class BulletinPdfPresenter
 {
-    /** Presupuesto de caracteres por campo (para caber en una página). */
+    /**
+     * Tope de SEGURIDAD por campo (muy por encima de lo que genera la IA): evita
+     * que un texto descontrolado rompa la maqueta, pero NO recorta el texto real
+     * (no aparece "…" en contenido normal). El ajuste a una página se hace
+     * limitando la CANTIDAD de ítems, no cortando el texto.
+     */
     public const LIMIT = [
-        'titulo_hero' => 68,
-        'conclusion' => 210,
-        'evento_titulo' => 72,
-        'evento_descripcion' => 95,
-        'evento_compacto' => 58,
-        'recomendacion' => 66,
-        'resumen_tactico' => 110,
-        'zona_critica' => 45,
-        'alerta_ambiental' => 95,
+        'titulo_hero' => 130,
+        'conclusion' => 360,
+        'evento_titulo' => 150,
+        'evento_descripcion' => 320,
+        'evento_compacto' => 95,
+        'recomendacion' => 240,
+        'resumen_tactico' => 260,
+        'zona_critica' => 120,
+        'alerta_ambiental' => 260,
     ];
 
     public const MAX_FEATURED = 3;      // eventos con descripción
-    public const MAX_COMPACT = 5;       // resto como una línea (siguen en el boletín)
+    public const MAX_COMPACT = 4;       // resto como una línea (siguen en el boletín)
     public const MAX_ALERTAS = 2;
     public const MAX_DISTRIBUCION = 5;
 
