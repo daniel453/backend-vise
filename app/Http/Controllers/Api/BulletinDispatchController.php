@@ -36,9 +36,9 @@ class BulletinDispatchController extends Controller
         }
         $batchId = $data['bulletin']->batch_id;
 
-        // No reenviar el mismo boletín (mismo batch_id). Los envíos de PRUEBA no
-        // cuentan: probar el SMTP no debe bloquear ni descontar el envío programado.
-        if ($batchId && ReportDispatchLog::query()->where('scope_level', 'national')->where('batch_id', $batchId)->where('mode', '!=', 'prueba')->exists()) {
+        // No reenviar el mismo boletín (mismo batch_id). Los envíos de PRUEBA y
+        // MANUAL no cuentan: no deben bloquear ni descontar el envío programado.
+        if ($batchId && ReportDispatchLog::query()->where('scope_level', 'national')->where('batch_id', $batchId)->whereNotIn('mode', ['prueba', 'manual'])->exists()) {
             return response()->json(['ok' => true, 'sent' => 0, 'skipped' => 'boletin ya enviado']);
         }
 
@@ -57,11 +57,11 @@ class BulletinDispatchController extends Controller
         }
 
         if (! $isSpecial) {
-            // Día normal: además, una sola vez al día (sin contar pruebas).
+            // Día normal: además, una sola vez al día (sin contar pruebas ni manuales).
             $alreadyToday = ReportDispatchLog::query()
                 ->where('scope_level', 'national')
                 ->whereDate('dispatch_date', $today)
-                ->where('mode', '!=', 'prueba')
+                ->whereNotIn('mode', ['prueba', 'manual'])
                 ->exists();
 
             if ($alreadyToday) {
@@ -75,7 +75,7 @@ class BulletinDispatchController extends Controller
             $last = ReportDispatchLog::query()
                 ->where('scope_level', 'national')
                 ->whereDate('dispatch_date', $today)
-                ->where('mode', '!=', 'prueba')
+                ->whereNotIn('mode', ['prueba', 'manual'])
                 ->latest('sent_at')->first();
 
             if ($last && $last->sent_at) {
