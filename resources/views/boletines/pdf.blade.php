@@ -32,7 +32,7 @@
   .hero { position: relative; background: #1B2A4A; color: #fff; border-bottom: 3px solid #E8192C; }
   .hero-content { position: relative; padding: 12px 20px 13px; }
   .hero-alerta { font-size: 7px; font-weight: bold; letter-spacing: 2.5px; color: #FF6B6B; text-transform: uppercase; margin-bottom: 4px; }
-  .hero-title { font-size: 19px; font-weight: bold; color: #fff; line-height: 1.08; letter-spacing: 0.3px; text-transform: uppercase; }
+  .hero-title { font-size: 22px; font-weight: bold; color: #fff; line-height: 1.08; letter-spacing: 0.3px; text-transform: uppercase; }
   .hero-sub { font-size: 8px; color: #C7D0DE; margin-top: 5px; }
   .hero-estado { position: absolute; top: 9px; right: 18px; text-align: right; }
   .hero-estado-lbl { font-size: 6.5px; letter-spacing: 2px; color: rgba(255,255,255,0.5); text-transform: uppercase; }

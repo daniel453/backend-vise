@@ -43,7 +43,7 @@ class NationalBulletinMail extends Mailable
     public function attachments(): array
     {
         return [
-            Attachment::fromData(fn () => $this->pdf, 'boletin-nacional.pdf')
+            Attachment::fromData(fn () => $this->pdf, 'Boletin-Nacional.pdf')
                 ->withMime('application/pdf'),
         ];
     }
