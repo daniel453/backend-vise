@@ -30,6 +30,29 @@ class BulletinDispatchController extends Controller
             return response()->json(['ok' => false, 'error' => 'unauthorized'], 401);
         }
 
+        // MODO PRUEBA: {"mode":"test"} envía YA, solo a los destinatarios marcados
+        // test=true, saltando toda la lógica de frecuencia/dedup. No cuenta para
+        // el envío programado del día (se registra con mode='test').
+        if ($request->input('mode') === 'test') {
+            $recipients = ReportRecipient::query()->where('test', true)->get();
+            if ($recipients->isEmpty()) {
+                return response()->json(['ok' => true, 'sent' => 0, 'message' => 'sin destinatarios de prueba (test=true)']);
+            }
+
+            $result = $dispatcher->sendNational($recipients, 'test');
+            if (! ($result['ok'] ?? false)) {
+                return response()->json(['ok' => false, 'error' => $result['error'] ?? 'error'], 404);
+            }
+
+            return response()->json([
+                'ok' => true,
+                'mode' => 'test',
+                'sent' => $result['sent'] ?? 0,
+                'failed' => $result['failed'] ?? 0,
+                'errors' => $result['errors'] ?? [],
+            ]);
+        }
+
         $data = $reports->viewData('nacional', null);
         if (! $data['bulletin']) {
             return response()->json(['ok' => false, 'error' => 'no_bulletin'], 404);
@@ -38,7 +61,7 @@ class BulletinDispatchController extends Controller
 
         // No reenviar el mismo boletín (mismo batch_id). Los envíos de PRUEBA y
         // MANUAL no cuentan: no deben bloquear ni descontar el envío programado.
-        if ($batchId && ReportDispatchLog::query()->where('scope_level', 'national')->where('batch_id', $batchId)->whereNotIn('mode', ['prueba', 'manual'])->exists()) {
+        if ($batchId && ReportDispatchLog::query()->where('scope_level', 'national')->where('batch_id', $batchId)->whereNotIn('mode', ['prueba', 'manual', 'test'])->exists()) {
             return response()->json(['ok' => true, 'sent' => 0, 'skipped' => 'boletin ya enviado']);
         }
 
@@ -61,7 +84,7 @@ class BulletinDispatchController extends Controller
             $alreadyToday = ReportDispatchLog::query()
                 ->where('scope_level', 'national')
                 ->whereDate('dispatch_date', $today)
-                ->whereNotIn('mode', ['prueba', 'manual'])
+                ->whereNotIn('mode', ['prueba', 'manual', 'test'])
                 ->exists();
 
             if ($alreadyToday) {
@@ -75,7 +98,7 @@ class BulletinDispatchController extends Controller
             $last = ReportDispatchLog::query()
                 ->where('scope_level', 'national')
                 ->whereDate('dispatch_date', $today)
-                ->whereNotIn('mode', ['prueba', 'manual'])
+                ->whereNotIn('mode', ['prueba', 'manual', 'test'])
                 ->latest('sent_at')->first();
 
             if ($last && $last->sent_at) {

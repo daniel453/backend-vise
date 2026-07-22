@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['email', 'name', 'regional_id', 'active'])]
+#[Fillable(['email', 'name', 'regional_id', 'active', 'test'])]
 class ReportRecipient extends Model
 {
     protected function casts(): array
     {
         return [
             'active' => 'boolean',
+            'test' => 'boolean',
         ];
     }
 
