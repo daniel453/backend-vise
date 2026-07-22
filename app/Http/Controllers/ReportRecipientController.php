@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Regional;
 use App\Models\ReportRecipient;
 use App\Services\BulletinDispatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 /**
@@ -16,12 +18,17 @@ class ReportRecipientController extends Controller
 {
     public function index(): View
     {
+        // Todos los destinatarios (nacionales primero, luego por regional).
         $recipients = ReportRecipient::query()
-            ->where('scope_level', 'national')
+            ->with('regional')
+            ->orderByRaw('regional_id IS NOT NULL')   // nacionales (null) primero
+            ->orderBy('regional_id')
             ->orderByDesc('active')->orderBy('email')
             ->get();
 
-        return view('boletines.destinatarios', compact('recipients'));
+        $regionals = Regional::query()->orderBy('name')->get();
+
+        return view('boletines.destinatarios', compact('recipients', 'regionals'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -29,11 +36,17 @@ class ReportRecipientController extends Controller
         $data = $request->validate([
             'email' => 'required|email|max:255',
             'name' => 'nullable|string|max:255',
+            // Vacío = destinatario nacional; una regional = recibe Nacional + su regional.
+            'regional_id' => ['nullable', 'integer', Rule::exists('regionals', 'id')],
         ]);
 
         ReportRecipient::query()->updateOrCreate(
             ['email' => mb_strtolower($data['email'])],
-            ['name' => $data['name'] ?? null, 'scope_level' => 'national', 'active' => true],
+            [
+                'name' => $data['name'] ?? null,
+                'regional_id' => $data['regional_id'] ?? null,
+                'active' => true,
+            ],
         );
 
         return redirect()->route('destinatarios')->with('ok', 'Destinatario guardado.');
@@ -74,7 +87,7 @@ class ReportRecipientController extends Controller
     public function sendNow(BulletinDispatcher $dispatcher): RedirectResponse
     {
         $recipients = ReportRecipient::query()
-            ->where('scope_level', 'national')->where('active', true)
+            ->where('active', true)
             ->get();
 
         if ($recipients->isEmpty()) {

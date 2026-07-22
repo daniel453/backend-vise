@@ -14,10 +14,10 @@ class NationalBulletinMail extends Mailable
     use Queueable, SerializesModels;
 
     /**
-     * @param  string  $pdf  Bytes del PDF del boletín nacional.
+     * @param  array<int, array{name: string, data: string}>  $pdfAttachments  PDFs a adjuntar (Nacional + regional(es)).
      */
     public function __construct(
-        public string $pdf,
+        public array $pdfAttachments,
         public ?string $recipientName = null,
         public ?string $dateLabel = null,
     ) {}
@@ -42,9 +42,10 @@ class NationalBulletinMail extends Mailable
      */
     public function attachments(): array
     {
-        return [
-            Attachment::fromData(fn () => $this->pdf, 'Boletin-Nacional.pdf')
+        return array_map(
+            fn (array $a) => Attachment::fromData(fn () => $a['data'], $a['name'])
                 ->withMime('application/pdf'),
-        ];
+            $this->pdfAttachments,
+        );
     }
 }

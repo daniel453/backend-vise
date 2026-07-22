@@ -42,8 +42,8 @@
 
   <div class="hero">
     <div class="brand">VISE · Boletines</div>
-    <h1>Destinatarios del reporte nacional</h1>
-    <div class="sub">Estos correos reciben automáticamente el boletín nacional en PDF cuando se envía.</div>
+    <h1>Destinatarios del boletín</h1>
+    <div class="sub">Cada correo recibe el boletín en PDF cuando se envía. Si le asignas una <b>regional</b>, recibe <b>Nacional + su regional</b>; si lo dejas en <b>Nacional</b>, recibe el panorama nacional con todas las regionales.</div>
     <div style="margin-top:8px;"><a class="back" href="{{ route('home') }}">← Volver a los boletines</a></div>
   </div>
 
@@ -56,6 +56,12 @@
       @csrf
       <input type="email" name="email" placeholder="correo@empresa.com" required>
       <input type="text" name="name" placeholder="Nombre o empresa (opcional)">
+      <select name="regional_id" style="font:inherit;font-size:14px;padding:11px 13px;border-radius:9px;border:1px solid var(--border);flex:1;min-width:160px;background:#fff;">
+        <option value="">Nacional (todas las regionales)</option>
+        @foreach($regionals as $rg)
+          <option value="{{ $rg->id }}">Regional {{ $rg->name }}</option>
+        @endforeach
+      </select>
       <button type="submit">Agregar</button>
     </form>
   </div>
@@ -83,12 +89,13 @@
       <div class="empty">Aún no hay correos. Agrega el primero arriba.</div>
     @else
       <table>
-        <thead><tr><th>Correo</th><th>Nombre</th><th>Estado</th><th></th></tr></thead>
+        <thead><tr><th>Correo</th><th>Nombre</th><th>Ámbito</th><th>Estado</th><th></th></tr></thead>
         <tbody>
           @foreach($recipients as $r)
             <tr>
               <td><b>{{ $r->email }}</b></td>
               <td>{{ $r->name ?? '—' }}</td>
+              <td>{{ $r->regional ? 'Regional '.$r->regional->name : 'Nacional' }}</td>
               <td><span class="badge {{ $r->active ? 'badge-on' : 'badge-off' }}">{{ $r->active ? 'Activo' : 'Inactivo' }}</span></td>
               <td style="text-align:right;white-space:nowrap;">
                 <form class="inline" action="{{ route('destinatarios.toggle', $r) }}" method="post">

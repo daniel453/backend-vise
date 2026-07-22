@@ -30,7 +30,13 @@ class BulletinReportService
         $bulletin = Bulletin::query()
             ->where('scope_level', $scopeLevel)
             ->where('scope', $scope)
-            ->latest('generated_at')
+            // Preferir el boletín CON narrativa (headline). Así, en el nivel
+            // región, el boletín del workflow de regionales (que sí trae
+            // titular/conclusión) gana sobre el roll-up sin narrativa que el
+            // workflow nacional genera de paso. Entre los que tienen narrativa,
+            // el más reciente.
+            ->orderByRaw("(headline IS NULL OR headline = '') asc")
+            ->orderByDesc('generated_at')
             ->first();
 
         $events = new Collection;

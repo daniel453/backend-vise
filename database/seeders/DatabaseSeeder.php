@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             CitySeeder::class,
             ScrapingSourceSeeder::class,
             BulletinFeedSeeder::class,
+            MarchCitySeeder::class,
         ]);
     }
 }

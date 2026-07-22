@@ -214,6 +214,20 @@ class BulletinPdfPresenter
         ];
     }
 
+    /**
+     * Assets compartidos del PDF (logo + fuente de iconos) como data URIs, para
+     * vistas que no pasan por present() — p. ej. el boletín de marchas.
+     *
+     * @return array{logoDataUri: ?string, faDataUri: ?string}
+     */
+    public static function sharedAssets(): array
+    {
+        return [
+            'logoDataUri' => self::brandAsset('altum-logo.png', 'image/png'),
+            'faDataUri' => self::fileDataUri(resource_path('fonts/fa-solid-900.ttf'), 'font/ttf'),
+        ];
+    }
+
     /** Lee un asset de marca de resources/brand y lo devuelve como data URI (o null si falta). */
     private static function brandAsset(string $file, string $mime): ?string
     {

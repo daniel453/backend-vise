@@ -87,8 +87,9 @@ class BulletinDispatchController extends Controller
         }
         // El dedup por batch_id (más arriba) evita reenviar el mismo boletín.
 
+        // Todos los destinatarios activos (nacionales + de cada regional). El
+        // dispatcher le arma a cada uno el PDF que le corresponde según su scope.
         $recipients = ReportRecipient::query()
-            ->where('scope_level', 'national')
             ->where('active', true)
             ->get();
 

@@ -54,5 +54,14 @@ return [
         // workflow corre cada 2h; el backend solo envía cuando toca el intervalo.
         'special_interval_hours' => (int) env('BULLETIN_DISPATCH_SPECIAL_INTERVAL_HOURS', 4),
         'timezone' => env('BULLETIN_DISPATCH_TZ', 'America/Bogota'),
+        // Antigüedad MÁXIMA (horas) de un boletín regional para anexarlo al
+        // correo. Como el workflow regional es independiente del nacional, una
+        // regional más vieja que esto se OMITE del PDF (no se envía data vieja
+        // disfrazada de hoy). Súbelo si corres el regional con poca frecuencia.
+        'regional_max_age_hours' => (int) env('BULLETIN_DISPATCH_REGIONAL_MAX_AGE_HOURS', 6),
+        // Igual, pero para el boletín de MARCHAS (adjunto extra del correo). Más
+        // amplio porque las marchas son eventos planeados y su flujo puede correr
+        // con menos frecuencia. Si está más viejo que esto, no se adjunta.
+        'march_max_age_hours' => (int) env('BULLETIN_DISPATCH_MARCH_MAX_AGE_HOURS', 26),
     ],
 ];

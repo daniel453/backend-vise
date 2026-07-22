@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BulletinPageController;
+use App\Http\Controllers\MarchCityController;
 use App\Http\Controllers\ReportRecipientController;
 use App\Http\Controllers\SpecialDateController;
 use Illuminate\Support\Facades\Route;
@@ -23,3 +24,9 @@ Route::post('/destinatarios/enviar-ahora', [ReportRecipientController::class, 's
 Route::get('/fechas-especiales', [SpecialDateController::class, 'index'])->name('fechas');
 Route::post('/fechas-especiales', [SpecialDateController::class, 'store'])->name('fechas.store');
 Route::delete('/fechas-especiales/{fecha}', [SpecialDateController::class, 'destroy'])->name('fechas.destroy');
+
+// Ciudades que monitorea el boletín de marchas (las lee el workflow n8n).
+Route::get('/marchas-ciudades', [MarchCityController::class, 'index'])->name('marchas.ciudades');
+Route::post('/marchas-ciudades', [MarchCityController::class, 'store'])->name('marchas.ciudades.store');
+Route::patch('/marchas-ciudades/{city}', [MarchCityController::class, 'toggle'])->name('marchas.ciudades.toggle');
+Route::delete('/marchas-ciudades/{city}', [MarchCityController::class, 'destroy'])->name('marchas.ciudades.destroy');
