@@ -210,13 +210,19 @@ class BulletinPdfPresenter
             'distTitle' => ['region' => 'Distribución por región', 'departamento' => 'Distribución por departamento', 'municipio' => 'Distribución por municipio'][$v['childLevelSlug'] ?? ''] ?? 'Distribución por región',
             'platformUrl' => self::platformUrl($v),
             'logoDataUri' => self::brandAsset('altum-logo.png', 'image/png'),
+            'faDataUri' => self::fileDataUri(resource_path('fonts/fa-solid-900.ttf'), 'font/ttf'),
         ];
     }
 
     /** Lee un asset de marca de resources/brand y lo devuelve como data URI (o null si falta). */
     private static function brandAsset(string $file, string $mime): ?string
     {
-        $path = resource_path('brand/' . $file);
+        return self::fileDataUri(resource_path('brand/' . $file), $mime);
+    }
+
+    /** Devuelve cualquier archivo como data URI base64 (o null si falta). */
+    private static function fileDataUri(string $path, string $mime): ?string
+    {
         if (! is_file($path)) {
             return null;
         }
