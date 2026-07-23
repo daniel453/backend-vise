@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['email', 'name', 'regional_id', 'active', 'test'])]
+#[Fillable(['email', 'name', 'active', 'test'])]
 class ReportRecipient extends Model
 {
     protected function casts(): array
@@ -18,11 +18,12 @@ class ReportRecipient extends Model
     }
 
     /**
-     * Regional VISE a la que pertenece el destinatario (nulo = nacional, recibe
-     * el panorama completo). Determina qué página regional se anexa a su PDF.
+     * Regionales VISE a las que pertenece el destinatario. Puede estar en varias.
+     * Sin regionales = destinatario nacional (recibe el panorama completo). Determina
+     * qué página(s) regional(es) se anexan a su PDF.
      */
-    public function regional(): BelongsTo
+    public function regionals(): BelongsToMany
     {
-        return $this->belongsTo(Regional::class);
+        return $this->belongsToMany(Regional::class);
     }
 }

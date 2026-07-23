@@ -43,7 +43,7 @@
   <div class="hero">
     <div class="brand">VISE · Boletines</div>
     <h1>Destinatarios del boletín</h1>
-    <div class="sub">Cada correo recibe el boletín en PDF cuando se envía. Si le asignas una <b>regional</b>, recibe <b>Nacional + su regional</b>; si lo dejas en <b>Nacional</b>, recibe el panorama nacional con todas las regionales.</div>
+    <div class="sub">Cada correo recibe el boletín en PDF cuando se envía. Si le asignas <b>una o varias regionales</b>, recibe <b>Nacional + esas regionales</b>; si no seleccionas ninguna (<b>Nacional</b>), recibe el panorama nacional con todas las regionales.</div>
     <div style="margin-top:8px;"><a class="back" href="{{ route('home') }}">← Volver a los boletines</a></div>
   </div>
 
@@ -56,14 +56,14 @@
       @csrf
       <input type="email" name="email" placeholder="correo@empresa.com" required>
       <input type="text" name="name" placeholder="Nombre o empresa (opcional)">
-      <select name="regional_id" style="font:inherit;font-size:14px;padding:11px 13px;border-radius:9px;border:1px solid var(--border);flex:1;min-width:160px;background:#fff;">
-        <option value="">Nacional (todas las regionales)</option>
+      <select name="regional_ids[]" multiple size="4" style="font:inherit;font-size:13px;padding:8px 10px;border-radius:9px;border:1px solid var(--border);flex:1;min-width:180px;background:#fff;">
         @foreach($regionals as $rg)
           <option value="{{ $rg->id }}">Regional {{ $rg->name }}</option>
         @endforeach
       </select>
       <button type="submit">Agregar</button>
     </form>
+    <div style="font-size:12px;color:#64748B;margin-top:8px;">Deja las regionales <b>sin seleccionar</b> para un destinatario <b>Nacional</b>. Marca <b>una o varias</b> (Ctrl/Cmd + clic) para asignarlo a esas regionales.</div>
   </div>
 
   <div class="card">
@@ -95,7 +95,7 @@
             <tr>
               <td><b>{{ $r->email }}</b></td>
               <td>{{ $r->name ?? '—' }}</td>
-              <td>{{ $r->regional ? 'Regional '.$r->regional->name : 'Nacional' }}</td>
+              <td>{{ $r->regionals->isEmpty() ? 'Nacional' : $r->regionals->pluck('name')->map(fn ($n) => 'Regional '.$n)->implode(', ') }}</td>
               <td><span class="badge {{ $r->active ? 'badge-on' : 'badge-off' }}">{{ $r->active ? 'Activo' : 'Inactivo' }}</span></td>
               <td style="text-align:right;white-space:nowrap;">
                 <form class="inline" action="{{ route('destinatarios.toggle', $r) }}" method="post">

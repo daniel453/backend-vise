@@ -105,16 +105,24 @@ class BulletinDispatcher
             $total++;
             $email = is_array($r) ? ($r['email'] ?? null) : ($r->email ?? null);
             $name = is_array($r) ? ($r['name'] ?? null) : ($r->name ?? null);
-            $regionalId = is_array($r) ? ($r['regional_id'] ?? null) : ($r->regional_id ?? null);
             if (! $email) {
                 continue;
             }
 
+            // Regionales del destinatario (puede tener VARIAS; vacío = nacional).
+            $regionalIds = is_array($r)
+                ? array_map('intval', (array) ($r['regional_ids'] ?? []))
+                : (isset($r->id) ? $r->regionals->pluck('id')->map(fn ($id) => (int) $id)->all() : []);
+
             // Un correo, varios adjuntos: Nacional + el/los regional(es) que apliquen.
             $attachments = [$nationalAttachment];
-            if ($regionalId !== null && isset($regionalAttachments[(int) $regionalId])) {
-                $attachments[] = $regionalAttachments[(int) $regionalId];              // su regional
-            } elseif ($regionalId === null) {
+            if ($regionalIds) {
+                foreach ($regionalIds as $rid) {
+                    if (isset($regionalAttachments[$rid])) {
+                        $attachments[] = $regionalAttachments[$rid];                   // cada regional del destinatario
+                    }
+                }
+            } else {
                 $attachments = array_merge($attachments, $freshRegionalAttachments);   // nacional: todas las frescas
             }
             if ($marchAttachment) {

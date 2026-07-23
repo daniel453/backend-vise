@@ -113,6 +113,7 @@ class BulletinDispatchController extends Controller
         // Todos los destinatarios activos (nacionales + de cada regional). El
         // dispatcher le arma a cada uno el PDF que le corresponde según su scope.
         $recipients = ReportRecipient::query()
+            ->with('regionals')
             ->where('active', true)
             ->get();
 

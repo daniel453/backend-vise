@@ -18,11 +18,8 @@ class ReportRecipientController extends Controller
 {
     public function index(): View
     {
-        // Todos los destinatarios (nacionales primero, luego por regional).
         $recipients = ReportRecipient::query()
-            ->with('regional')
-            ->orderByRaw('regional_id IS NOT NULL')   // nacionales (null) primero
-            ->orderBy('regional_id')
+            ->with('regionals')
             ->orderByDesc('active')->orderBy('email')
             ->get();
 
@@ -36,18 +33,16 @@ class ReportRecipientController extends Controller
         $data = $request->validate([
             'email' => 'required|email|max:255',
             'name' => 'nullable|string|max:255',
-            // Vacío = destinatario nacional; una regional = recibe Nacional + su regional.
-            'regional_id' => ['nullable', 'integer', Rule::exists('regionals', 'id')],
+            // Vacío = destinatario nacional; una o varias regionales = Nacional + esas regionales.
+            'regional_ids' => ['nullable', 'array'],
+            'regional_ids.*' => ['integer', Rule::exists('regionals', 'id')],
         ]);
 
-        ReportRecipient::query()->updateOrCreate(
+        $recipient = ReportRecipient::query()->updateOrCreate(
             ['email' => mb_strtolower($data['email'])],
-            [
-                'name' => $data['name'] ?? null,
-                'regional_id' => $data['regional_id'] ?? null,
-                'active' => true,
-            ],
+            ['name' => $data['name'] ?? null, 'active' => true],
         );
+        $recipient->regionals()->sync($data['regional_ids'] ?? []);
 
         return redirect()->route('destinatarios')->with('ok', 'Destinatario guardado.');
     }
@@ -87,6 +82,7 @@ class ReportRecipientController extends Controller
     public function sendNow(BulletinDispatcher $dispatcher): RedirectResponse
     {
         $recipients = ReportRecipient::query()
+            ->with('regionals')
             ->where('active', true)
             ->get();
 
