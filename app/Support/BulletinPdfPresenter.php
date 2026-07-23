@@ -84,18 +84,21 @@ class BulletinPdfPresenter
             ->concat($v['trafficOther']);
         $total = $allEvents->count();
 
-        // --- Distribución por región DERIVADA de los eventos (suma == total) ---
+        // --- Distribución por región: SOLO eventos ubicados en una región (los
+        // "sin ubicación" no se muestran; el resto de regiones va en "Otras"). ---
         $porRegion = $allEvents
-            ->groupBy(fn ($e) => $e->region ?: 'Sin ubicación')
+            ->filter(fn ($e) => (bool) $e->region)
+            ->groupBy(fn ($e) => $e->region)
             ->map->count()
             ->sortDesc();
+        $ubicados = $porRegion->sum();
 
         $distribucion = $porRegion->take(self::MAX_DISTRIBUCION)
             ->map(fn ($n, $nombre) => ['nombre' => $nombre, 'eventos' => $n])
             ->values()->all();
         $mostrado = array_sum(array_column($distribucion, 'eventos'));
-        if ($mostrado < $total) { // el resto agrupado, para que siga sumando total
-            $distribucion[] = ['nombre' => 'Otras', 'eventos' => $total - $mostrado];
+        if ($mostrado < $ubicados) { // el resto de regiones ubicadas, agrupado
+            $distribucion[] = ['nombre' => 'Otras', 'eventos' => $ubicados - $mostrado];
         }
 
         // --- Marchas / movilizaciones: se separan para tener sección propia ---

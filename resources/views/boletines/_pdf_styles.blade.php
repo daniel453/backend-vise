@@ -14,21 +14,21 @@
 
   /* HEADER */
   .hd { width: 100%; background: #14432F; color: #fff; border-collapse: collapse; }
-  .hd td { padding: 10px 16px; vertical-align: middle; }
-  .logo { height: 56px; background: #fff; border-radius: 5px; padding: 3px; vertical-align: middle; }
+  .hd td { padding: 13px 18px; vertical-align: middle; }
+  .logo { height: 70px; background: #fff; border-radius: 5px; padding: 3px; vertical-align: middle; }
   .reg { font-size: 8px; letter-spacing: 1.5px; color: #A7D7B8; text-transform: uppercase; margin-top: 5px; }
-  .tt { font-size: 17px; font-weight: bold; text-transform: uppercase; line-height: 1.05; text-align: center; }
-  .ts { font-size: 8px; letter-spacing: 2px; color: #A7D7B8; text-transform: uppercase; text-align: center; margin-top: 4px; }
-  .dbx { background: #fff; color: #14432F; border-radius: 6px; padding: 4px 13px; text-align: center; }
-  .dbx .d { font-size: 21px; font-weight: bold; line-height: 1; }
+  .tt { font-size: 21px; font-weight: bold; text-transform: uppercase; line-height: 1.05; text-align: center; }
+  .ts { font-size: 9px; letter-spacing: 2px; color: #A7D7B8; text-transform: uppercase; text-align: center; margin-top: 5px; }
+  .dbx { background: #fff; color: #14432F; border-radius: 6px; padding: 5px 15px; text-align: center; }
+  .dbx .d { font-size: 24px; font-weight: bold; line-height: 1; }
   .dbx .m { font-size: 8px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; }
   .dbx .y { font-size: 8px; color: #4B7A5E; }
   .subbar { background: #1B5E3F; color: #fff; text-align: center; padding: 5px; font-size: 9px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; border-bottom: 3px solid #F0B429; }
 
   /* Marca GRUPO ALTUM en el header + rótulo de monitoreo */
-  .brand { font-size: 15px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; line-height: 1; }
-  .brand-sub { font-size: 6.5px; letter-spacing: 2px; color: #A7D7B8; text-transform: uppercase; margin-top: 3px; }
-  .h-monitoreo { font-size: 7px; letter-spacing: 2px; color: #A7D7B8; text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
+  .brand { font-size: 19px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; line-height: 1; }
+  .brand-sub { font-size: 7px; letter-spacing: 2px; color: #A7D7B8; text-transform: uppercase; margin-top: 4px; }
+  .h-monitoreo { font-size: 7.5px; letter-spacing: 2px; color: #A7D7B8; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
 
   /* HERO — titular del día (data del navy) */
   .hero { width: 100%; background: #1B5E3F; color: #fff; border-collapse: collapse; }

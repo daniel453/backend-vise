@@ -82,7 +82,7 @@
             <div class="ch"><span class="ic">&#xf3ed;</span>Estado Actual</div>
             <div class="cb">
               <div class="bl" style="text-align:center;"><span class="nivbadge" style="background:{{ $nivC }};">Alerta {{ $niv }}</span></div>
-              <div class="bl">{{ $conclusion }}</div>
+              <div class="bl"><span style="font-size:7px; font-weight:bold; letter-spacing:1.5px; color:#4B7A5E; text-transform:uppercase; display:block; margin-bottom:2px;">Conclusión</span>{{ $conclusion }}</div>
             </div>
           </div>
         </td>
