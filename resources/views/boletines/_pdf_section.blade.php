@@ -119,9 +119,9 @@
               <div class="ch"><span class="ic">&#xf279;</span>Cobertura Operativa · Mapa de Riesgo</div>
               <div class="cb" style="text-align:center;">
                 @if($mapa['img'])
-                  <img src="{{ $mapa['img'] }}" style="max-width:100%; max-height:235px;" alt="Mapa de riesgo por departamento">
+                  <img src="{{ $mapa['img'] }}" style="width:200px;" alt="Mapa de riesgo por departamento">
                 @else
-                  <div class="bl" style="color:#6B7280;">Mapa no disponible (Browsershot/Chrome no configurado).</div>
+                  <div class="bl" style="color:#6B7280;">Mapa no disponible.</div>
                 @endif
                 <div style="margin-top:5px; font-size:7px; color:#4B5563; line-height:1.6;">
                   <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#DC2626;vertical-align:middle;margin:0 2px 0 4px;"></span>Alto

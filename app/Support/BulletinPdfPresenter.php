@@ -89,8 +89,8 @@ class BulletinPdfPresenter
         $total = $allEvents->count();
 
         // --- Mapa de calor (solo boletín nacional): nivel de riesgo por
-        // departamento VISE + PNG del mapa (rasterizado con Browsershot). Si
-        // Browsershot no está, 'img' queda null y la vista muestra solo la tabla.
+        // departamento VISE + SVG del mapa embebido (data URI) que dompdf pinta
+        // directo. Si algo falla, 'img' queda null y la vista muestra solo la tabla.
         $mapa = null;
         if ($scopeLevel === 'national') {
             $riesgos = ColombiaMap::riesgos($allEvents);

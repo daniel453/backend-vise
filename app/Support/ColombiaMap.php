@@ -5,17 +5,16 @@ namespace App\Support;
 use App\Models\Departaments;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Spatie\Browsershot\Browsershot;
 
 /**
  * Arma el mapa de calor de Colombia para el boletín nacional: pinta cada
  * departamento donde opera VISE según su nivel de riesgo (calculado desde los
- * eventos del boletín) y lo rasteriza a PNG con Browsershot (Chrome headless)
- * para incrustarlo en el PDF (dompdf no renderiza bien SVG complejo).
+ * eventos del boletín) y lo entrega como SVG embebido (data URI) para
+ * incrustarlo directo en el PDF con dompdf — sin dependencias externas.
  *
- * Degradación elegante: si Browsershot/Chrome no está disponible, dataUri()
- * devuelve null y la vista muestra solo la tabla de "Nivel de riesgo por
- * departamento" — el PDF nunca falla por el mapa.
+ * Degradación elegante: si algo falla al construir el SVG, dataUri() devuelve
+ * null y la vista muestra solo la tabla de "Nivel de riesgo por departamento" —
+ * el PDF nunca falla por el mapa.
  */
 class ColombiaMap
 {
@@ -81,47 +80,32 @@ class ColombiaMap
     }
 
     /**
-     * PNG del mapa como data URI (base64), o null si no se pudo rasterizar.
-     * Cachea por hash del contenido para no invocar Chrome en cada envío.
+     * SVG del mapa como data URI (base64), listo para <img src="...">. dompdf
+     * renderiza el SVG vía <img> DENTRO de celdas de tabla (el SVG inline NO
+     * funciona dentro de <td>). Claves: tamaño intrínseco = viewBox (el <img> lo
+     * escala por CSS) y cabecera <?xml?> para que dompdf lo reconozca. Null si
+     * algo falla → la vista muestra solo la tabla de riesgo.
      */
     public static function dataUri(array $riesgos): ?string
     {
-        $html = view('boletines._mapa', $riesgos)->render();
-        $hash = substr(sha1($html), 0, 16);
-        $dir = storage_path('app/maps');
-        $cacheFile = $dir.'/'.$hash.'.png';
-
-        if (is_file($cacheFile)) {
-            return 'data:image/png;base64,'.base64_encode((string) file_get_contents($cacheFile));
-        }
-
         try {
-            if (! is_dir($dir)) {
-                mkdir($dir, 0775, true);
-            }
-            // Aspecto del viewBox (613x694) escalado; fondo transparente.
-            $shot = Browsershot::html($html)
-                ->windowSize(920, 1041)
-                ->deviceScaleFactor(2)
-                ->setScreenshotType('png')
-                ->transparentBackground();
+            $parts = preg_split('/\s+/', trim((string) $riesgos['viewBox']));
+            $w = $parts[2] ?? 613;
+            $h = $parts[3] ?? 694;
 
-            if ($node = config('services.browsershot.node_binary')) {
-                $shot->setNodeBinary($node);
-            }
-            if ($npm = config('services.browsershot.npm_binary')) {
-                $shot->setNpmBinary($npm);
-            }
-            if ($chrome = config('services.browsershot.chrome_path')) {
-                $shot->setChromePath($chrome);
+            $paths = '';
+            foreach ($riesgos['departments'] as $d) {
+                $paths .= '<path d="'.$d['path'].'" fill="'.$d['fill'].'" stroke="#ffffff" stroke-width="0.7"/>';
             }
 
-            $shot->save($cacheFile);
+            $svg = '<?xml version="1.0" encoding="UTF-8"?>'
+                .'<svg xmlns="http://www.w3.org/2000/svg" viewBox="'.$riesgos['viewBox'].'" width="'.$w.'" height="'.$h.'">'
+                .$paths
+                .'</svg>';
 
-            return 'data:image/png;base64,'.base64_encode((string) file_get_contents($cacheFile));
+            return 'data:image/svg+xml;base64,'.base64_encode($svg);
         } catch (\Throwable $e) {
-            // Chrome/puppeteer no instalado o falló: el PDF sale sin mapa.
-            Log::warning('ColombiaMap: no se pudo rasterizar el mapa: '.$e->getMessage());
+            Log::warning('ColombiaMap: no se pudo construir el SVG del mapa: '.$e->getMessage());
 
             return null;
         }

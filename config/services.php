@@ -64,13 +64,4 @@ return [
         // con menos frecuencia. Si está más viejo que esto, no se adjunta.
         'march_max_age_hours' => (int) env('BULLETIN_DISPATCH_MARCH_MAX_AGE_HOURS', 26),
     ],
-
-    // Browsershot (Chrome headless) para rasterizar el mapa de calor del boletín
-    // nacional. Rutas OPCIONALES: si están vacías, Browsershot autodetecta node y
-    // usa el Chromium de puppeteer. Si el mapa falla, el PDF sale sin él.
-    'browsershot' => [
-        'node_binary' => env('BROWSERSHOT_NODE_BINARY'),
-        'npm_binary' => env('BROWSERSHOT_NPM_BINARY'),
-        'chrome_path' => env('BROWSERSHOT_CHROME_PATH'),
-    ],
 ];
