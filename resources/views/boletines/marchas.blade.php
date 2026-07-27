@@ -86,7 +86,7 @@
     <table style="width:100%; border-collapse:separate; border-spacing:5px 0; margin-bottom:8px;">
       <tr>
         <td style="width:62%; vertical-align:top;">
-          <div class="card" style="height:100%;">
+          <div class="card">
             <div class="ch march"><span class="ic">&#xf0a1;</span>{{ $bulletin->headline ?: 'Panorama de movilizaciones del día' }}</div>
             <div class="cb">
               @if($bulletin->conclusion)<div class="bl">{{ $bulletin->conclusion }}</div>@endif
@@ -96,7 +96,7 @@
           </div>
         </td>
         <td style="width:38%; vertical-align:top;">
-          <div class="card" style="height:100%;">
+          <div class="card">
             <div class="ch"><span class="ic" style="color:#F0B429;">&#xf0eb;</span>Nivel de impacto</div>
             <div class="cb leg">
               <div><span class="dot" style="background:#DC2626;"></span><b>ALTO</b> — bloqueos totales, disturbios o afectación mayor de vías.</div>
@@ -140,7 +140,7 @@
     <table style="width:100%; border-collapse:separate; border-spacing:5px 0; margin-top:2px;">
       <tr>
         <td style="width:34%; vertical-align:top;">
-          <div class="card" style="height:100%;">
+          <div class="card">
             <div class="ch"><span class="ic" style="color:#EA580C;">&#xf071;</span>Posibles afectaciones</div>
             <div class="cb ul">
               <div><span class="ic" style="color:#EA580C;">&#xf192;</span>Bloqueos y cierres temporales de vías.</div>
@@ -151,7 +151,7 @@
           </div>
         </td>
         <td style="width:34%; vertical-align:top;">
-          <div class="card" style="height:100%;">
+          <div class="card">
             <div class="ch"><span class="ic" style="color:#16A34A;">&#xf00c;</span>Recomendaciones</div>
             <div class="cb ul">
               <div><span class="ic">&#xf00c;</span>Verifique rutas alternas antes de desplazarse.</div>
@@ -162,7 +162,7 @@
           </div>
         </td>
         <td style="width:32%; vertical-align:top;">
-          <div class="card" style="height:100%;">
+          <div class="card">
             <div class="ch"><span class="ic" style="color:#4C1D95;">&#xf095;</span>Líneas de atención</div>
             <div class="cb">
               <table class="lines" style="width:100%;">
