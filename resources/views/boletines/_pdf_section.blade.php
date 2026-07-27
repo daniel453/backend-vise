@@ -110,6 +110,45 @@
       </tr>
     </table>
 
+    @if(!empty($mapa))
+      {{-- MAPA DE CALOR + NIVEL DE RIESGO POR DEPARTAMENTO (solo nacional) --}}
+      <table class="grid" style="margin-top:8px;">
+        <tr>
+          <td style="width:42%; vertical-align:top;">
+            <div class="card">
+              <div class="ch"><span class="ic">&#xf279;</span>Cobertura Operativa · Mapa de Riesgo</div>
+              <div class="cb" style="text-align:center;">
+                @if($mapa['img'])
+                  <img src="{{ $mapa['img'] }}" style="max-width:100%; max-height:235px;" alt="Mapa de riesgo por departamento">
+                @else
+                  <div class="bl" style="color:#6B7280;">Mapa no disponible (Browsershot/Chrome no configurado).</div>
+                @endif
+                <div style="margin-top:5px; font-size:7px; color:#4B5563; line-height:1.6;">
+                  <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#DC2626;vertical-align:middle;margin:0 2px 0 4px;"></span>Alto
+                  <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#F97316;vertical-align:middle;margin:0 2px 0 4px;"></span>Medio
+                  <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#FACC15;vertical-align:middle;margin:0 2px 0 4px;"></span>Bajo
+                  <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#22C55E;vertical-align:middle;margin:0 2px 0 4px;"></span>Normal
+                  <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#E5E7EB;vertical-align:middle;margin:0 2px 0 4px;"></span>Sin cobertura
+                </div>
+              </div>
+            </div>
+          </td>
+          <td style="width:58%; vertical-align:top;">
+            <div class="card">
+              <div class="ch"><span class="ic">&#xf3c5;</span>Nivel de Riesgo por Departamento</div>
+              <div class="cb">
+                @forelse($mapa['panel'] as $p)
+                  <div class="rrow"><span class="rpill" style="background:{{ $p['color'] }};">{{ $p['level'] }}</span>{{ $p['name'] }} <span style="color:#9CA3AF;">({{ $p['eventos'] }} evento(s))</span></div>
+                @empty
+                  <div class="bl" style="color:#16A34A;">Sin novedades relevantes en los departamentos de cobertura VISE.</div>
+                @endforelse
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    @endif
+
     {{-- FILA 2: Novedades + Marchas | Recomendaciones + Ambientales --}}
     <table class="grid" style="margin-top:8px;">
       <tr>

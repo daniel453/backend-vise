@@ -33,9 +33,13 @@ class BulletinPdfPresenter
     ];
 
     public const MAX_FEATURED = 3;      // eventos con descripción
+
     public const MAX_COMPACT = 3;       // resto como una línea (siguen en el boletín)
+
     public const MAX_MARCHAS = 4;       // marchas / movilizaciones (una línea c/u)
+
     public const MAX_ALERTAS = 2;
+
     public const MAX_DISTRIBUCION = 5;
 
     /** Orden de severidad: CRÍTICO primero. */
@@ -66,7 +70,7 @@ class BulletinPdfPresenter
             $slice = mb_substr($slice, 0, $lastSpace);
         }
 
-        return rtrim($slice, " \t\n\r.,;:—-") . '…';
+        return rtrim($slice, " \t\n\r.,;:—-").'…';
     }
 
     /** Construye el modelo listo para la vista a partir de viewData(). */
@@ -83,6 +87,17 @@ class BulletinPdfPresenter
             ->concat($v['trafficTm'])
             ->concat($v['trafficOther']);
         $total = $allEvents->count();
+
+        // --- Mapa de calor (solo boletín nacional): nivel de riesgo por
+        // departamento VISE + PNG del mapa (rasterizado con Browsershot). Si
+        // Browsershot no está, 'img' queda null y la vista muestra solo la tabla.
+        $mapa = null;
+        if ($scopeLevel === 'national') {
+            $riesgos = ColombiaMap::riesgos($allEvents);
+            if ($riesgos) {
+                $mapa = ['img' => ColombiaMap::dataUri($riesgos), 'panel' => $riesgos['panel']];
+            }
+        }
 
         // --- Distribución por región: SOLO eventos ubicados en una región (los
         // "sin ubicación" no se muestran; el resto de regiones va en "Otras"). ---
@@ -107,7 +122,7 @@ class BulletinPdfPresenter
         // que es donde la IA suele clasificarlas.
         $esMarcha = fn ($e) => (bool) preg_match(
             '/\bmarchas?\b|movilizaci|manifestaci|\bprotestas?\b|disturbio|plant[oó]n|cacerol|\bparos?\b/iu',
-            (string) $e->subtype . ' ' . (string) $e->title . ' ' . (string) $e->summary
+            (string) $e->subtype.' '.(string) $e->title.' '.(string) $e->summary
         );
 
         $marchasCol = $v['securityEvents']->filter($esMarcha)
@@ -122,7 +137,7 @@ class BulletinPdfPresenter
                 'titulo' => self::smart($e->title, self::LIMIT['evento_compacto']),
                 'severidad' => $e->severity ?: 'MARCHA',
                 'esCritico' => in_array($sev, ['CRÍTICO', 'CRITICO'], true),
-                'geo' => trim(($e->municipality ? $e->municipality . ', ' : '') . ($e->department ?? ''), ', '),
+                'geo' => trim(($e->municipality ? $e->municipality.', ' : '').($e->department ?? ''), ', '),
             ];
         })->values()->all();
 
@@ -143,14 +158,14 @@ class BulletinPdfPresenter
                 'descripcion' => self::smart($e->summary, self::LIMIT['evento_descripcion']),
                 'severidad' => $e->severity,
                 'esCritico' => in_array($sev, ['CRÍTICO', 'CRITICO'], true),
-                'geo' => trim(($e->municipality ? $e->municipality . ', ' : '') . ($e->department ?? ''), ', '),
+                'geo' => trim(($e->municipality ? $e->municipality.', ' : '').($e->department ?? ''), ', '),
             ];
         })->all();
 
         // Resto de eventos, compactos (una línea) — se quedan DENTRO del boletín.
         $eventosCompactos = $seguridad->slice(self::MAX_FEATURED, self::MAX_COMPACT)->map(function ($e) {
             $sev = mb_strtoupper((string) $e->severity);
-            $geo = trim(($e->municipality ? $e->municipality . ', ' : '') . ($e->department ?? ''), ', ');
+            $geo = trim(($e->municipality ? $e->municipality.', ' : '').($e->department ?? ''), ', ');
 
             return [
                 'titulo' => self::smart($e->title, self::LIMIT['evento_compacto']),
@@ -172,7 +187,7 @@ class BulletinPdfPresenter
 
         // --- Alertas ambientales (100 c/u) ---
         $ambientales = $v['environmental']->take(self::MAX_ALERTAS)->map(fn ($e) => [
-            'titulo' => trim(($e->subtype ?? 'Alerta') . ' — ' . ($e->department ?? 'Colombia')),
+            'titulo' => trim(($e->subtype ?? 'Alerta').' — '.($e->department ?? 'Colombia')),
             'descripcion' => self::smart($e->summary, self::LIMIT['alerta_ambiental']),
         ])->all();
 
@@ -210,6 +225,7 @@ class BulletinPdfPresenter
             'recomendaciones' => $recomendaciones,
             'ambientales' => $ambientales,
             'distribucion' => $distribucion,
+            'mapa' => $mapa,
             'distTitle' => ['region' => 'Distribución por región', 'departamento' => 'Distribución por departamento', 'municipio' => 'Distribución por municipio'][$v['childLevelSlug'] ?? ''] ?? 'Distribución por región',
             'platformUrl' => self::platformUrl($v),
             'logoDataUri' => self::brandAsset('altum-logo.png', 'image/png'),
@@ -234,7 +250,7 @@ class BulletinPdfPresenter
     /** Lee un asset de marca de resources/brand y lo devuelve como data URI (o null si falta). */
     private static function brandAsset(string $file, string $mime): ?string
     {
-        return self::fileDataUri(resource_path('brand/' . $file), $mime);
+        return self::fileDataUri(resource_path('brand/'.$file), $mime);
     }
 
     /** Devuelve cualquier archivo como data URI base64 (o null si falta). */
@@ -244,7 +260,7 @@ class BulletinPdfPresenter
             return null;
         }
 
-        return 'data:' . $mime . ';base64,' . base64_encode((string) file_get_contents($path));
+        return 'data:'.$mime.';base64,'.base64_encode((string) file_get_contents($path));
     }
 
     /** Conclusión sintetizada SIN repetir zona/tendencia (esos van en la táctica). */
@@ -253,9 +269,9 @@ class BulletinPdfPresenter
         $amenaza = $bulletin->main_threat ?: ($bulletin->headline ?: 'Panorama de seguridad del día');
         $accion = $bulletin->operational_recommendation ?: ($bulletin->logistics_recommendation ?: '');
 
-        $txt = rtrim($amenaza, '. ') . '. Se registran ' . $total . ' evento(s), ' . (int) $bulletin->critical_events . ' crítico(s).';
+        $txt = rtrim($amenaza, '. ').'. Se registran '.$total.' evento(s), '.(int) $bulletin->critical_events.' crítico(s).';
         if ($accion !== '') {
-            $txt .= ' ' . rtrim($accion, '. ') . '.';
+            $txt .= ' '.rtrim($accion, '. ').'.';
         }
 
         return $txt;
