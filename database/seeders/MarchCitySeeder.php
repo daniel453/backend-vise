@@ -13,6 +13,9 @@ class MarchCitySeeder extends Seeder
 {
     public function run(): void
     {
+        // Ciudades con MÁS marchas del país (no importa el departamento, aquí lo
+        // relevante es dónde se concentran las movilizaciones). Se administran
+        // luego desde la web para agregar/quitar.
         $cities = ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Bucaramanga'];
 
         $rows = [];
