@@ -86,39 +86,16 @@
             </div>
           </div>
         </td>
-        <td style="width:33%; vertical-align:top;">
-          @if(!empty($mapa))
-            {{-- MAPA DE CALOR (solo nacional): reemplaza "Riesgo por Región" --}}
-            <div class="card">
-              <div class="ch"><span class="ic">&#xf279;</span>Cobertura Operativa · Riesgo</div>
-              <div class="cb" style="text-align:center; padding-bottom:2px;">
-                @if($mapa['img'])<img src="{{ $mapa['img'] }}" style="width:138px;" alt="Mapa de riesgo por departamento">@endif
-                <div style="font-size:6px; color:#4B5563; margin-top:1px;">
-                  <span style="display:inline-block;width:6px;height:6px;border-radius:2px;background:#DC2626;vertical-align:middle;"></span> Alto
-                  <span style="display:inline-block;width:6px;height:6px;border-radius:2px;background:#F97316;vertical-align:middle;margin-left:3px;"></span> Medio
-                  <span style="display:inline-block;width:6px;height:6px;border-radius:2px;background:#FACC15;vertical-align:middle;margin-left:3px;"></span> Bajo
-                  <span style="display:inline-block;width:6px;height:6px;border-radius:2px;background:#22C55E;vertical-align:middle;margin-left:3px;"></span> Normal
-                </div>
-              </div>
-              @if(count($mapa['panel']))
-                <div class="cb" style="padding-top:1px;">
-                  @foreach(array_slice($mapa['panel'], 0, 4) as $p)
-                    <div class="rrow"><span class="rpill" style="background:{{ $p['color'] }};">{{ $p['level'] }}</span>{{ $p['name'] }} <span style="color:#9CA3AF;">({{ $p['eventos'] }})</span></div>
-                  @endforeach
-                </div>
-              @endif
+        <td style="width:33%;">
+          <div class="card">
+            <div class="ch"><span class="ic">&#xf200;</span>Riesgo por Región</div>
+            <div class="cb">
+              @foreach($distribucion as $r)
+                @php [$mc,$col,$lbl] = $riesgo($r['eventos']); @endphp
+                <div class="rrow"><span class="rpill {{ $mc }}" style="background:{{ $col }};">{{ $lbl }}</span>{{ $r['nombre'] }} <span style="color:#9CA3AF;">({{ $r['eventos'] }})</span></div>
+              @endforeach
             </div>
-          @else
-            <div class="card">
-              <div class="ch"><span class="ic">&#xf200;</span>Riesgo por Región</div>
-              <div class="cb">
-                @foreach($distribucion as $r)
-                  @php [$mc,$col,$lbl] = $riesgo($r['eventos']); @endphp
-                  <div class="rrow"><span class="rpill {{ $mc }}" style="background:{{ $col }};">{{ $lbl }}</span>{{ $r['nombre'] }} <span style="color:#9CA3AF;">({{ $r['eventos'] }})</span></div>
-                @endforeach
-              </div>
-            </div>
-          @endif
+          </div>
         </td>
         <td style="width:33%;">
           <div class="card">

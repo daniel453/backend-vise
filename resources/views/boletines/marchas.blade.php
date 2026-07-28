@@ -9,6 +9,8 @@
   .march { padding:7px 0; border-bottom:1px solid #EEF4F0; }
   .march:last-child { border-bottom:none; }
   .march-t { font-size:10.5px; font-weight:bold; color:#14432F; line-height:1.2; }
+  .march-loc { font-size:9px; font-weight:bold; color:#4C1D95; margin-top:3px; line-height:1.35; }
+  .march-loc .ic { margin-right:2px; }
   .march-sum { font-size:8.5px; color:#1F2937; line-height:1.45; margin-top:3px; }
   .march-meta { font-size:8.5px; color:#374151; margin-top:4px; line-height:1.55; }
   .march-meta b { color:#4C1D95; }
@@ -31,16 +33,38 @@
 <body>
 @php
   $lvlC = fn($x) => ['ALTO'=>'#DC2626','MEDIO'=>'#EA580C','BAJO'=>'#16A34A'][mb_strtoupper((string)$x)] ?? '#6B7280';
-  $porCiudad = $events->groupBy('city');
   $total = $events->count();
-  $nCiudades = $porCiudad->count();
+  $nCiudades = collect($events)->groupBy('city')->count();
   $byLevel = ['ALTO'=>0,'MEDIO'=>0,'BAJO'=>0];
   foreach ($events as $e) { $k = mb_strtoupper((string) $e->level); if (isset($byLevel[$k])) { $byLevel[$k]++; } }
+  // TOPE PARA 1 PÁGINA: se muestran las marchas de mayor impacto (ALTO→MEDIO→BAJO).
+  // Las cifras/distribución de arriba SÍ reflejan el total real; esto solo acota el detalle.
+  $MAX_MARCHAS_PDF = 6;
+  $rankLvl = ['ALTO'=>0,'MEDIO'=>1,'BAJO'=>2];
+  $mostradas = collect($events)->sortBy(fn($e) => $rankLvl[mb_strtoupper((string) $e->level)] ?? 3)->take($MAX_MARCHAS_PDF);
+  $porCiudad = $mostradas->groupBy('city');
+  $ocultas = max(0, $total - $mostradas->count());
   $fmtFecha = function($e) {
     $partes = [];
     if ($e->event_date) { $partes[] = \Illuminate\Support\Carbon::parse($e->event_date)->locale('es')->isoFormat('D MMM'); }
     if ($e->event_time) { $partes[] = $e->event_time; }
     return implode(' · ', $partes);
+  };
+  // Ciudad monitoreada -> departamento (para la distribución y el encabezado).
+  $ciudadDepto = [
+    'bogotá'=>'Bogotá D.C.','bogota'=>'Bogotá D.C.','soacha'=>'Cundinamarca','tunja'=>'Boyacá','neiva'=>'Huila','ibagué'=>'Tolima','ibague'=>'Tolima',
+    'barranquilla'=>'Atlántico','cartagena'=>'Bolívar','valledupar'=>'Cesar','riohacha'=>'La Guajira','santa marta'=>'Magdalena',
+    'medellín'=>'Antioquia','medellin'=>'Antioquia','cali'=>'Valle del Cauca','manizales'=>'Caldas','popayán'=>'Cauca','popayan'=>'Cauca',
+    'armenia'=>'Quindío','pereira'=>'Risaralda','mocoa'=>'Putumayo','villavicencio'=>'Meta','arauca'=>'Arauca','yopal'=>'Casanare',
+    'puerto carreño'=>'Vichada','bucaramanga'=>'Santander',
+  ];
+  $deptoDe = fn($ciudad) => $ciudadDepto[mb_strtolower(trim((string) $ciudad))] ?? ((string) $ciudad !== '' ? $ciudad : 'Sin ubicación');
+  $distDepto = collect($events)->groupBy(fn($e) => $deptoDe($e->city))->map->count()->sortDesc();
+  // SIEMPRE devuelve dónde es la marcha: punto/vía exacta si la fuente la trae, si no la ciudad.
+  $dondeDe = function($e) {
+    $ciudad = (string) $e->city !== '' ? $e->city : 'Ciudad no especificada';
+    $punto = $e->concentration_point ?: ($e->affected_roads ?: null);
+    return $punto ? ($ciudad.' · '.$punto) : $ciudad;
   };
 @endphp
 
@@ -85,7 +109,7 @@
     {{-- RESUMEN + SEMÁFORO --}}
     <table style="width:100%; border-collapse:separate; border-spacing:5px 0; margin-bottom:8px;">
       <tr>
-        <td style="width:62%; vertical-align:top;">
+        <td style="width:44%; vertical-align:top;">
           <div class="card">
             <div class="ch march"><span class="ic">&#xf0a1;</span>{{ $bulletin->headline ?: 'Panorama de movilizaciones del día' }}</div>
             <div class="cb">
@@ -95,7 +119,19 @@
             </div>
           </div>
         </td>
-        <td style="width:38%; vertical-align:top;">
+        <td style="width:28%; vertical-align:top;">
+          <div class="card">
+            <div class="ch"><span class="ic" style="color:#4C1D95;">&#xf3c5;</span>Distribución por Departamento</div>
+            <div class="cb">
+              @forelse($distDepto as $depto => $n)
+                <div class="rrow"><span class="rpill" style="background:#4C1D95;">{{ $n }}</span>{{ $depto }} <span style="color:#9CA3AF;">marcha(s)</span></div>
+              @empty
+                <div class="bl" style="color:#6B7280;">Sin marchas registradas.</div>
+              @endforelse
+            </div>
+          </div>
+        </td>
+        <td style="width:28%; vertical-align:top;">
           <div class="card">
             <div class="ch"><span class="ic" style="color:#F0B429;">&#xf0eb;</span>Nivel de impacto</div>
             <div class="cb leg">
@@ -111,11 +147,12 @@
     {{-- MARCHAS POR CIUDAD --}}
     @forelse($porCiudad as $ciudad => $marchas)
       <div class="card" style="margin-bottom:8px;">
-        <div class="m-city">{{ $ciudad }} <span class="n">{{ count($marchas) }} marcha(s)</span></div>
+        <div class="m-city">{{ $ciudad }} <span style="font-weight:normal; opacity:.85;">· {{ $deptoDe($ciudad) }}</span> <span class="n">{{ count($marchas) }} marcha(s)</span></div>
         <div class="cb">
           @foreach($marchas as $e)
             <div class="march">
               <div class="march-t">{{ $e->title }}@if($e->level)<span class="lvl" style="background:{{ $lvlC($e->level) }};">{{ $e->level }}</span>@endif</div>
+              <div class="march-loc"><span class="ic">&#xf3c5;</span><b>Dónde:</b> {{ $dondeDe($e) }}</div>
               @if($e->summary)<div class="march-sum">{{ $e->summary }}</div>@endif
               <div class="march-meta">
                 @if($fmtFecha($e))<span><b>Cuándo:</b> {{ $fmtFecha($e) }}</span><br>@endif
@@ -135,6 +172,9 @@
     @empty
       <div class="card"><div class="cb"><div class="bl" style="color:#6B7280;">No se reportaron marchas ni movilizaciones en las ciudades monitoreadas para el período.</div></div></div>
     @endforelse
+    @if($ocultas > 0)
+      <div style="font-size:8px; color:#6B7280; text-align:center; margin:2px 0 6px;">+ {{ $ocultas }} marcha(s) adicional(es) monitoreada(s) — se muestran las de mayor impacto.</div>
+    @endif
 
     {{-- PANELES DE APOYO --}}
     <table style="width:100%; border-collapse:separate; border-spacing:5px 0; margin-top:2px;">

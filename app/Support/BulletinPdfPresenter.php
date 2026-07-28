@@ -88,17 +88,6 @@ class BulletinPdfPresenter
             ->concat($v['trafficOther']);
         $total = $allEvents->count();
 
-        // --- Mapa de calor (solo boletín nacional): nivel de riesgo por
-        // departamento VISE + SVG del mapa embebido (data URI) que dompdf pinta
-        // directo. Si algo falla, 'img' queda null y la vista muestra solo la tabla.
-        $mapa = null;
-        if ($scopeLevel === 'national') {
-            $riesgos = ColombiaMap::riesgos($allEvents);
-            if ($riesgos) {
-                $mapa = ['img' => ColombiaMap::dataUri($riesgos), 'panel' => $riesgos['panel']];
-            }
-        }
-
         // --- Distribución por región: SOLO eventos ubicados en una región (los
         // "sin ubicación" no se muestran; el resto de regiones va en "Otras"). ---
         $porRegion = $allEvents
@@ -225,7 +214,6 @@ class BulletinPdfPresenter
             'recomendaciones' => $recomendaciones,
             'ambientales' => $ambientales,
             'distribucion' => $distribucion,
-            'mapa' => $mapa,
             'distTitle' => ['region' => 'Distribución por región', 'departamento' => 'Distribución por departamento', 'municipio' => 'Distribución por municipio'][$v['childLevelSlug'] ?? ''] ?? 'Distribución por región',
             'platformUrl' => self::platformUrl($v),
             'logoDataUri' => self::brandAsset('altum-logo.png', 'image/png'),
