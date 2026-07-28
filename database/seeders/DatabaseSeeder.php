@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RegionalSeeder::class,
             DepartamentSeeder::class,
-            CitySeeder::class,
             ScrapingSourceSeeder::class,
             BulletinFeedSeeder::class,
             MarchCitySeeder::class,

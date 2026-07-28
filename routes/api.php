@@ -1,9 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\AiValidationController;
-use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\BulletinController;
 use App\Http\Controllers\Api\BulletinDispatchController;
 use App\Http\Controllers\Api\BulletinEventController;
@@ -19,16 +16,6 @@ Route::post('/boletines/enviar-nacional', [BulletinDispatchController::class, 's
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
-
-    Route::get('/cities', [CityController::class, 'index']);
-
-    Route::get('/assessments', [AssessmentController::class, 'index']);
-    Route::post('/assessments', [AssessmentController::class, 'store']);
-    Route::get('/assessments/{assessment}', [AssessmentController::class, 'show']);
-
-    Route::post('/ai/validate-vulnerability', [AiValidationController::class, 'validateVulnerability']);
-    Route::post('/ai/validate-consistency', [AiValidationController::class, 'validateConsistency']);
-    Route::post('/ai/suggest-risks', [AiValidationController::class, 'suggestRisks']);
 
     Route::get('/scraping-sources', [ScrapingSourceController::class, 'index']);
     Route::get('/scraping-sources/national-media-domains', [ScrapingSourceController::class, 'nationalMediaDomains']);

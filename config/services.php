@@ -35,11 +35,6 @@ return [
         ],
     ],
 
-    'openai' => [
-        'key' => env('OPENAI_API_KEY'),
-        'model' => env('OPENAI_MODEL', 'gpt-5.6-luna'),
-    ],
-
     // Envío del boletín nacional por correo (lo dispara n8n).
     'bulletin_dispatch' => [
         // Token compartido — evita que cualquiera dispare el envío masivo.
