@@ -88,7 +88,7 @@
         </td>
         <td style="width:33%;">
           <div class="card">
-            <div class="ch"><span class="ic">&#xf200;</span>Riesgo por Región</div>
+            <div class="ch"><span class="ic">&#xf200;</span>{{ $riesgoTitle ?? 'Riesgo por Región' }}</div>
             <div class="cb">
               @foreach($distribucion as $r)
                 @php [$mc,$col,$lbl] = $riesgo($r['eventos']); @endphp

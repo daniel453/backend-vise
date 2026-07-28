@@ -88,11 +88,17 @@ class BulletinPdfPresenter
             ->concat($v['trafficOther']);
         $total = $allEvents->count();
 
-        // --- Distribución por región: SOLO eventos ubicados en una región (los
-        // "sin ubicación" no se muestran; el resto de regiones va en "Otras"). ---
+        // --- Distribución: una CAPA más específica según el scope. En el
+        // NACIONAL se agrupa por REGIÓN; en un REGIONAL ya estamos dentro de una
+        // región, así que la capa útil es el DEPARTAMENTO (y en depto, el
+        // municipio). Solo eventos ubicados; el resto va en "Otros".
+        $distKey = ['region' => 'department', 'department' => 'municipality'][$scopeLevel] ?? 'region';
+        $riesgoTitle = ['region' => 'Riesgo por Departamento', 'department' => 'Riesgo por Municipio'][$scopeLevel] ?? 'Riesgo por Región';
+        $otrasLabel = ['region' => 'Otros deptos.', 'department' => 'Otros'][$scopeLevel] ?? 'Otras';
+
         $porRegion = $allEvents
-            ->filter(fn ($e) => (bool) $e->region)
-            ->groupBy(fn ($e) => $e->region)
+            ->filter(fn ($e) => (bool) $e->{$distKey})
+            ->groupBy(fn ($e) => $e->{$distKey})
             ->map->count()
             ->sortDesc();
         $ubicados = $porRegion->sum();
@@ -101,8 +107,8 @@ class BulletinPdfPresenter
             ->map(fn ($n, $nombre) => ['nombre' => $nombre, 'eventos' => $n])
             ->values()->all();
         $mostrado = array_sum(array_column($distribucion, 'eventos'));
-        if ($mostrado < $ubicados) { // el resto de regiones ubicadas, agrupado
-            $distribucion[] = ['nombre' => 'Otras', 'eventos' => $ubicados - $mostrado];
+        if ($mostrado < $ubicados) { // el resto de ubicaciones, agrupado
+            $distribucion[] = ['nombre' => $otrasLabel, 'eventos' => $ubicados - $mostrado];
         }
 
         // --- Marchas / movilizaciones: se separan para tener sección propia ---
@@ -214,6 +220,7 @@ class BulletinPdfPresenter
             'recomendaciones' => $recomendaciones,
             'ambientales' => $ambientales,
             'distribucion' => $distribucion,
+            'riesgoTitle' => $riesgoTitle,
             'distTitle' => ['region' => 'Distribución por región', 'departamento' => 'Distribución por departamento', 'municipio' => 'Distribución por municipio'][$v['childLevelSlug'] ?? ''] ?? 'Distribución por región',
             'platformUrl' => self::platformUrl($v),
             'logoDataUri' => self::brandAsset('altum-logo.png', 'image/png'),
