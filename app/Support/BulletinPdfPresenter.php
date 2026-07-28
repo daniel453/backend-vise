@@ -221,6 +221,9 @@ class BulletinPdfPresenter
             'ambientales' => $ambientales,
             'distribucion' => $distribucion,
             'riesgoTitle' => $riesgoTitle,
+            // Las marchas se cubren en el boletín TEMÁTICO de marchas: en los
+            // regionales no se repite la sección (solo aparece en el nacional).
+            'mostrarMarchas' => $scopeLevel === 'national',
             'distTitle' => ['region' => 'Distribución por región', 'departamento' => 'Distribución por departamento', 'municipio' => 'Distribución por municipio'][$v['childLevelSlug'] ?? ''] ?? 'Distribución por región',
             'platformUrl' => self::platformUrl($v),
             'logoDataUri' => self::brandAsset('altum-logo.png', 'image/png'),

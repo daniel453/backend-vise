@@ -68,7 +68,11 @@
       <tr>
         <td><div class="stat-n">{{ $stats['total'] }}</div><div class="stat-l">Eventos</div><div class="stat-bar"><div class="stat-bar-fill" style="width:{{ $barW($stats['total'],10) }}%;background:#1B5E3F;"></div></div></td>
         <td><div class="stat-n red">{{ $stats['criticos'] }}</div><div class="stat-l">Críticos</div><div class="stat-bar"><div class="stat-bar-fill" style="width:{{ $barW($stats['criticos'],20) }}%;background:#DC2626;"></div></div></td>
-        <td><div class="stat-n purple">{{ $stats['marchas'] }}</div><div class="stat-l">Marchas</div><div class="stat-bar"><div class="stat-bar-fill" style="width:{{ $barW($stats['marchas'],20) }}%;background:#7C3AED;"></div></div></td>
+        @if($mostrarMarchas ?? true)
+          <td><div class="stat-n purple">{{ $stats['marchas'] }}</div><div class="stat-l">Marchas</div><div class="stat-bar"><div class="stat-bar-fill" style="width:{{ $barW($stats['marchas'],20) }}%;background:#7C3AED;"></div></div></td>
+        @else
+          <td><div class="stat-n purple">{{ $stats['areas'] }}</div><div class="stat-l">Deptos</div><div class="stat-bar"><div class="stat-bar-fill" style="width:{{ $barW($stats['areas'],20) }}%;background:#7C3AED;"></div></div></td>
+        @endif
         <td><div class="stat-n orange">{{ $stats['vias'] }}</div><div class="stat-l">Vías Afectadas</div><div class="stat-bar"><div class="stat-bar-fill" style="width:{{ $barW($stats['vias'],15) }}%;background:#EA580C;"></div></div></td>
         <td><div class="stat-n">{{ $stats['ambientales'] }}</div><div class="stat-l">Ambientales</div><div class="stat-bar"><div class="stat-bar-fill" style="width:{{ $barW($stats['ambientales'],25) }}%;background:#16A34A;"></div></div></td>
       </tr>
@@ -131,7 +135,7 @@
               @endforeach
             </div>
           </div>
-          @if(count($marchas))
+          @if(($mostrarMarchas ?? true) && count($marchas))
             <div class="card" style="margin-top:8px;">
               <div class="ch march"><span class="ic">&#xf0a1;</span>Marchas y Movilizaciones · {{ $stats['marchas'] }}</div>
               <div class="cb">
