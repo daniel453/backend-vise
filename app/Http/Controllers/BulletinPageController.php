@@ -6,6 +6,7 @@ use App\Models\Bulletin;
 use App\Services\BulletinReportService;
 use App\Support\BulletinPdfPresenter;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -14,32 +15,49 @@ class BulletinPageController extends Controller
     public function __construct(private readonly BulletinReportService $reports) {}
 
     /**
-     * Home público: directorio de entrada. Muestra el boletín nacional
-     * (resumen) y las regiones como tarjetas.
+     * Entrada del portal: el tablero de la Central de Monitoreo se abre en el
+     * boletín NACIONAL; desde el menú de cobertura se navega a cada regional.
      */
-    public function home(): View
+    public function home(): RedirectResponse
     {
-        $batch = Bulletin::query()->latest('generated_at')->value('batch_id');
-
-        $national = Bulletin::query()->where('batch_id', $batch)->where('scope_level', 'national')->first();
-
-        $regions = Bulletin::query()
-            ->where('batch_id', $batch)->where('scope_level', 'region')
-            ->orderByDesc('critical_events')->orderByDesc('total_events')->orderBy('scope')
-            ->get();
-
-        $updatedAt = $national?->generated_at;
-
-        return view('boletines.home', compact('national', 'regions', 'updatedAt'));
+        return redirect()->route('boletin', ['level' => 'nacional']);
     }
 
     /**
-     * Página del boletín de un scope, con breadcrumb y drill-down a los
-     * scopes hijos (región → departamentos → municipios).
+     * Tablero del boletín de un scope (nacional o regional), con el menú de
+     * cobertura (Nacional + regiones) y drill-down a los scopes hijos.
      */
     public function show(string $level, ?string $scope = null): View
     {
-        return view('boletines.detalle', $this->reports->viewData($level, $scope));
+        $data = $this->reports->viewData($level, $scope);
+        $data['cobertura'] = $this->coberturaMenu($data['bulletin']->batch_id ?? Bulletin::query()->latest('generated_at')->value('batch_id'));
+        $data['updatedAt'] = $data['bulletin']->generated_at ?? null;
+
+        return view('boletines.detalle', $data);
+    }
+
+    /**
+     * Menú de cobertura del sidebar: Nacional + las regiones de la última
+     * corrida, con su conteo de eventos/críticos.
+     *
+     * @return array<int,array{level:string,scope:?string,nombre:string,eventos:int,criticos:int}>
+     */
+    private function coberturaMenu(?string $batch): array
+    {
+        if (! $batch) {
+            return [];
+        }
+        $menu = [];
+        $nacional = Bulletin::query()->where('batch_id', $batch)->where('scope_level', 'national')->first();
+        if ($nacional) {
+            $menu[] = ['level' => 'nacional', 'scope' => null, 'nombre' => 'Nacional', 'eventos' => (int) $nacional->total_events, 'criticos' => (int) $nacional->critical_events];
+        }
+        $regions = Bulletin::query()->where('batch_id', $batch)->where('scope_level', 'region')->orderBy('scope')->get();
+        foreach ($regions as $r) {
+            $menu[] = ['level' => 'region', 'scope' => $r->scope, 'nombre' => $r->scope, 'eventos' => (int) $r->total_events, 'criticos' => (int) $r->critical_events];
+        }
+
+        return $menu;
     }
 
     /**
