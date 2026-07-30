@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bulletin;
+use App\Repositories\BulletinRepository;
 use App\Services\BulletinReportService;
 use App\Support\BulletinPdfPresenter;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -12,7 +12,10 @@ use Illuminate\View\View;
 
 class BulletinPageController extends Controller
 {
-    public function __construct(private readonly BulletinReportService $reports) {}
+    public function __construct(
+        private readonly BulletinReportService $reports,
+        private readonly BulletinRepository $bulletins,
+    ) {}
 
     /**
      * Entrada del portal: el tablero de la Central de Monitoreo se abre en el
@@ -30,7 +33,7 @@ class BulletinPageController extends Controller
     public function show(string $level, ?string $scope = null): View
     {
         $data = $this->reports->viewData($level, $scope);
-        $data['cobertura'] = $this->coberturaMenu($data['bulletin']->batch_id ?? Bulletin::query()->latest('generated_at')->value('batch_id'));
+        $data['cobertura'] = $this->coberturaMenu($data['bulletin']->batch_id ?? $this->bulletins->latestBatchId());
         $data['updatedAt'] = $data['bulletin']->generated_at ?? null;
 
         return view('boletines.detalle', $data);
@@ -48,12 +51,10 @@ class BulletinPageController extends Controller
             return [];
         }
         $menu = [];
-        $nacional = Bulletin::query()->where('batch_id', $batch)->where('scope_level', 'national')->first();
-        if ($nacional) {
+        if ($nacional = $this->bulletins->nationalOfBatch($batch)) {
             $menu[] = ['level' => 'nacional', 'scope' => null, 'nombre' => 'Nacional', 'eventos' => (int) $nacional->total_events, 'criticos' => (int) $nacional->critical_events];
         }
-        $regions = Bulletin::query()->where('batch_id', $batch)->where('scope_level', 'region')->orderBy('scope')->get();
-        foreach ($regions as $r) {
+        foreach ($this->bulletins->regionsOfBatch($batch) as $r) {
             $menu[] = ['level' => 'region', 'scope' => $r->scope, 'nombre' => $r->scope, 'eventos' => (int) $r->total_events, 'criticos' => (int) $r->critical_events];
         }
 

@@ -4,48 +4,38 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bulletin;
-use App\Models\BulletinEvent;
+use App\Repositories\BulletinEventRepository;
+use App\Repositories\BulletinRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BulletinController extends Controller
 {
+    public function __construct(
+        private readonly BulletinRepository $bulletins,
+        private readonly BulletinEventRepository $events,
+    ) {}
+
     /**
      * Lista los boletines generados (uno por scope), más recientes primero.
-     * Acepta `?scope_level=` (municipality/department/region/national) y
-     * `?scope=` — el HTML los usa para poblar el selector.
+     * Acepta `?scope_level=`, `?scope=`, `?department=`, `?region=`.
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Bulletin::query()->latest('generated_at');
-
-        foreach (['scope_level', 'scope', 'department', 'region'] as $filter) {
-            if ($request->filled($filter)) {
-                $query->where($filter, $request->string($filter));
-            }
-        }
-
-        return response()->json($query->paginate(50));
+        return response()->json($this->bulletins->search(
+            $request->only(['scope_level', 'scope', 'department', 'region'])
+        ));
     }
 
     /**
-     * Devuelve un boletín con sus eventos — lo que el HTML muestra cuando el
-     * usuario elige un scope. Los eventos son los de la misma corrida
-     * (`batch_id`) que caen dentro del scope del boletín.
+     * Devuelve un boletín con sus eventos (los de la misma corrida que caen
+     * dentro de su scope).
      */
     public function show(Bulletin $bulletin): JsonResponse
     {
-        $events = BulletinEvent::query()
-            ->where('batch_id', $bulletin->batch_id)
-            ->when($bulletin->scope_level === 'municipality', fn ($q) => $q->where('municipality', $bulletin->scope))
-            ->when($bulletin->scope_level === 'department', fn ($q) => $q->where('department', $bulletin->scope))
-            ->when($bulletin->scope_level === 'region', fn ($q) => $q->where('region', $bulletin->scope))
-            ->orderByRaw("CASE severity WHEN 'CRÍTICO' THEN 0 WHEN 'ALTO' THEN 1 WHEN 'MEDIO' THEN 2 ELSE 3 END")
-            ->get();
-
         return response()->json([
             'bulletin' => $bulletin,
-            'events' => $events,
+            'events' => $this->events->forScope($bulletin->batch_id, $bulletin->scope_level, $bulletin->scope),
         ]);
     }
 }

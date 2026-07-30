@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-use App\Models\Regional;
+use App\Repositories\RegionalRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
@@ -87,8 +87,7 @@ class BulletinPdfPresenter
         $headerTitle = 'Panorama de Orden Público y Movilidad';
         $headerDeptos = null;
         if ($scopeLevel === 'region') {
-            $deptos = Regional::query()->where('name', $v['scope'])->first()
-                ?->departaments()->orderBy('name')->pluck('name')->all() ?? [];
+            $deptos = app(RegionalRepository::class)->departmentNames($v['scope']);
             $headerTitle = 'Regional '.$v['scope'];
             $headerDeptos = $deptos ? implode(' · ', $deptos) : null;
         }

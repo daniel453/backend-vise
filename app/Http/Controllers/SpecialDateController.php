@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DispatchSpecialDate;
+use App\Repositories\DispatchSpecialDateRepository;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -13,11 +14,11 @@ use Illuminate\View\View;
  */
 class SpecialDateController extends Controller
 {
+    public function __construct(private readonly DispatchSpecialDateRepository $dates) {}
+
     public function index(): View
     {
-        $dates = DispatchSpecialDate::query()
-            ->orderBy('date')
-            ->get();
+        $dates = $this->dates->allOrdered();
 
         return view('boletines.fechas', compact('dates'));
     }
@@ -28,18 +29,14 @@ class SpecialDateController extends Controller
             'date' => 'required|date',
             'description' => 'nullable|string|max:255',
         ]);
-
-        DispatchSpecialDate::query()->updateOrCreate(
-            ['date' => $data['date']],
-            ['description' => $data['description'] ?? null],
-        );
+        $this->dates->upsert($data['date'], $data['description'] ?? null);
 
         return redirect()->route('fechas')->with('ok', 'Fecha especial guardada.');
     }
 
     public function destroy(DispatchSpecialDate $fecha): RedirectResponse
     {
-        $fecha->delete();
+        $this->dates->delete($fecha);
 
         return redirect()->route('fechas')->with('ok', 'Fecha eliminada.');
     }

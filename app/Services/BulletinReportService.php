@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
-use App\Models\Bulletin;
-use App\Models\BulletinEvent;
+use App\Repositories\BulletinEventRepository;
+use App\Repositories\BulletinRepository;
 use Illuminate\Support\Collection;
 
 /**
  * Carga el boletín de un scope + sus eventos, hijos, breadcrumb y stats.
  * Compartido por la vista web, la generación de PDF y el envío por correo.
+ * El acceso a datos va por los repositorios (regla Service + Repository).
  */
 class BulletinReportService
 {
@@ -20,6 +21,11 @@ class BulletinReportService
         'municipio' => 'municipality',
     ];
 
+    public function __construct(
+        private readonly BulletinRepository $bulletins,
+        private readonly BulletinEventRepository $events,
+    ) {}
+
     public function viewData(string $level, ?string $scope): array
     {
         $scopeLevel = self::LEVELS[$level] ?? 'national';
@@ -27,17 +33,7 @@ class BulletinReportService
             $scope = 'NACIONAL';
         }
 
-        $bulletin = Bulletin::query()
-            ->where('scope_level', $scopeLevel)
-            ->where('scope', $scope)
-            // Preferir el boletín CON narrativa (headline). Así, en el nivel
-            // región, el boletín del workflow de regionales (que sí trae
-            // titular/conclusión) gana sobre el roll-up sin narrativa que el
-            // workflow nacional genera de paso. Entre los que tienen narrativa,
-            // el más reciente.
-            ->orderByRaw("(headline IS NULL OR headline = '') asc")
-            ->orderByDesc('generated_at')
-            ->first();
+        $bulletin = $this->bulletins->resolveForScope($scopeLevel, $scope);
 
         $events = new Collection;
         $children = new Collection;
@@ -47,13 +43,7 @@ class BulletinReportService
         if ($bulletin) {
             $batch = $bulletin->batch_id;
 
-            $events = BulletinEvent::query()
-                ->where('batch_id', $batch)
-                ->when($scopeLevel === 'municipality', fn ($q) => $q->where('municipality', $scope))
-                ->when($scopeLevel === 'department', fn ($q) => $q->where('department', $scope))
-                ->when($scopeLevel === 'region', fn ($q) => $q->where('region', $scope))
-                ->orderByRaw("CASE severity WHEN 'CRÍTICO' THEN 0 WHEN 'ALTO' THEN 1 WHEN 'MEDIO' THEN 2 ELSE 3 END")
-                ->get();
+            $events = $this->events->forScope($batch, $scopeLevel, $scope);
 
             // Scopes hijos para el drill-down.
             [$childScopeLevel, $childLevelSlug, $childFilter] = match ($scopeLevel) {
@@ -63,11 +53,7 @@ class BulletinReportService
                 default => [null, null, null],
             };
             if ($childScopeLevel) {
-                $children = Bulletin::query()
-                    ->where('batch_id', $batch)->where('scope_level', $childScopeLevel)
-                    ->when($childFilter, fn ($q) => $q->where($childFilter[0], $childFilter[1]))
-                    ->orderByDesc('critical_events')->orderByDesc('total_events')->orderBy('scope')
-                    ->get();
+                $children = $this->bulletins->childrenOf($batch, $childScopeLevel, $childFilter);
             }
 
             // Breadcrumb (de lo general a lo particular).

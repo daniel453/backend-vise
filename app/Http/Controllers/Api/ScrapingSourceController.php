@@ -3,27 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ScrapingSource;
+use App\Repositories\ScrapingSourceRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ScrapingSourceController extends Controller
 {
+    public function __construct(private readonly ScrapingSourceRepository $sources) {}
+
     /**
      * Lista la matriz de fuentes (Paso 1 - Contexto), en el orden original.
-     * Acepta `?group=Medios nacionales` para filtrar un solo grupo — el flujo
-     * de n8n que arma los boletines usa ese filtro para traer solo los
-     * dominios de medios, en vez de tener la lista embebida en el workflow.
+     * Acepta `?group=Medios nacionales` para filtrar un solo grupo.
      */
     public function index(Request $request): JsonResponse
     {
-        $query = ScrapingSource::query()->orderBy('sort_order');
-
-        if ($request->filled('group')) {
-            $query->where('group', $request->string('group'));
-        }
-
-        return response()->json($query->get(['group', 'source', 'coverage', 'domain']));
+        return response()->json($this->sources->list($request->input('group')));
     }
 
     /**
@@ -32,12 +26,6 @@ class ScrapingSourceController extends Controller
      */
     public function nationalMediaDomains(): JsonResponse
     {
-        $domains = ScrapingSource::query()
-            ->where('group', 'Medios nacionales')
-            ->whereNotNull('domain')
-            ->orderBy('sort_order')
-            ->pluck('domain');
-
-        return response()->json(['domains' => $domains]);
+        return response()->json(['domains' => $this->sources->nationalMediaDomains()]);
     }
 }

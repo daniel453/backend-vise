@@ -3,10 +3,9 @@
 namespace App\Services;
 
 use App\Mail\NationalBulletinMail;
-use App\Models\MarchBulletin;
-use App\Models\MarchEvent;
-use App\Models\Regional;
-use App\Models\ReportDispatchLog;
+use App\Repositories\MarchRepository;
+use App\Repositories\RegionalRepository;
+use App\Repositories\ReportDispatchLogRepository;
 use App\Support\BulletinPdfPresenter;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
@@ -16,11 +15,16 @@ use Illuminate\Support\Facades\Mail;
  * Arma el PDF del boletín nacional y lo envía a una lista de destinatarios,
  * usando el mailer configurado (smtp / roundrobin con failover) y dejando
  * registro en report_dispatch_logs. Lo comparten el disparo de n8n y los
- * botones de prueba/envío manual de la web.
+ * botones de prueba/envío manual de la web. El acceso a datos va por repositorios.
  */
 class BulletinDispatcher
 {
-    public function __construct(private BulletinReportService $reports) {}
+    public function __construct(
+        private BulletinReportService $reports,
+        private RegionalRepository $regionals,
+        private MarchRepository $marches,
+        private ReportDispatchLogRepository $logs,
+    ) {}
 
     /**
      * @param  iterable  $recipients  objetos/arrays con 'email' y (opcional) 'name'
@@ -56,7 +60,7 @@ class BulletinDispatcher
         // por la regional del destinatario). Solo se adjuntan las frescas —una
         // regional que no corrió/está vieja se omite para no enviar data vieja.
         $freshRegionalAttachments = [];
-        foreach (Regional::query()->orderBy('name')->get() as $regional) {
+        foreach ($this->regionals->allOrdered() as $regional) {
             $regionalView = $this->reports->viewData('region', $regional->name);
             $regionalBulletin = $regionalView['bulletin'];
             if (! $regionalBulletin || ! Carbon::parse($regionalBulletin->generated_at)->gte($freshAfter)) {
@@ -71,14 +75,11 @@ class BulletinDispatcher
         // Boletín TEMÁTICO de marchas: adjunto extra para TODOS los destinatarios
         // (no depende de la regional). Se adjunta solo si hay uno reciente.
         $marchAttachment = null;
-        $marchBulletin = MarchBulletin::query()->latest('generated_at')->first();
+        $marchBulletin = $this->marches->latestBulletin();
         if ($marchBulletin) {
             $marchFreshAfter = Carbon::now()->subHours((int) config('services.bulletin_dispatch.march_max_age_hours', 26));
             if (Carbon::parse($marchBulletin->generated_at)->gte($marchFreshAfter)) {
-                $marchEvents = MarchEvent::query()
-                    ->where('batch_id', $marchBulletin->batch_id)
-                    ->orderBy('city')->orderBy('event_date')
-                    ->get();
+                $marchEvents = $this->marches->eventsOfBatch($marchBulletin->batch_id);
                 $marchAttachment = [
                     'name' => 'Boletin-Marchas.pdf',
                     'data' => Pdf::loadView('boletines.marchas', array_merge(
@@ -122,7 +123,7 @@ class BulletinDispatcher
             }
         }
 
-        ReportDispatchLog::query()->create([
+        $this->logs->log([
             'scope_level' => 'national',
             'batch_id' => $view['bulletin']->batch_id,
             'mode' => $mode,

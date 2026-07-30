@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\DispatchSpecialDate;
-use App\Models\ReportDispatchLog;
-use App\Models\ReportRecipient;
+use App\Repositories\DispatchSpecialDateRepository;
+use App\Repositories\ReportDispatchLogRepository;
+use App\Repositories\ReportRecipientRepository;
 use App\Services\BulletinDispatcher;
 use App\Services\BulletinReportService;
 use Illuminate\Http\JsonResponse;
@@ -21,6 +21,12 @@ use Illuminate\Support\Carbon;
  */
 class BulletinDispatchController extends Controller
 {
+    public function __construct(
+        private readonly ReportRecipientRepository $recipients,
+        private readonly ReportDispatchLogRepository $logs,
+        private readonly DispatchSpecialDateRepository $specialDates,
+    ) {}
+
     public function sendNational(Request $request, BulletinReportService $reports, BulletinDispatcher $dispatcher): JsonResponse
     {
         // Solo n8n (con el token compartido) puede disparar el envío masivo.
@@ -34,7 +40,7 @@ class BulletinDispatchController extends Controller
         // test=true, saltando toda la lógica de frecuencia/dedup. No cuenta para
         // el envío programado del día (se registra con mode='test').
         if ($request->input('mode') === 'test') {
-            $recipients = ReportRecipient::query()->where('test', true)->get();
+            $recipients = $this->recipients->testRecipients();
             if ($recipients->isEmpty()) {
                 return response()->json(['ok' => true, 'sent' => 0, 'message' => 'sin destinatarios de prueba (test=true)']);
             }
@@ -61,7 +67,7 @@ class BulletinDispatchController extends Controller
 
         // No reenviar el mismo boletín (mismo batch_id). Los envíos de PRUEBA y
         // MANUAL no cuentan: no deben bloquear ni descontar el envío programado.
-        if ($batchId && ReportDispatchLog::query()->where('scope_level', 'national')->where('batch_id', $batchId)->whereNotIn('mode', ['prueba', 'manual', 'test'])->exists()) {
+        if ($batchId && $this->logs->nationalAlreadySentForBatch($batchId)) {
             return response()->json(['ok' => true, 'sent' => 0, 'skipped' => 'boletin ya enviado']);
         }
 
@@ -71,7 +77,7 @@ class BulletinDispatchController extends Controller
         $today = $now->toDateString();
         $startHour = (int) config('services.bulletin_dispatch.daily_hour', 8);
 
-        $isSpecial = DispatchSpecialDate::query()->whereDate('date', $today)->exists();
+        $isSpecial = $this->specialDates->isSpecialOn($today);
 
         // Hora de inicio: no se envía antes de esta hora en NINGÚN modo. En fechas
         // especiales el envío cada 2h también arranca aquí (nada de madrugada).
@@ -81,13 +87,7 @@ class BulletinDispatchController extends Controller
 
         if (! $isSpecial) {
             // Día normal: además, una sola vez al día (sin contar pruebas ni manuales).
-            $alreadyToday = ReportDispatchLog::query()
-                ->where('scope_level', 'national')
-                ->whereDate('dispatch_date', $today)
-                ->whereNotIn('mode', ['prueba', 'manual', 'test'])
-                ->exists();
-
-            if ($alreadyToday) {
+            if ($this->logs->nationalAlreadySentToday($today)) {
                 return response()->json(['ok' => true, 'sent' => 0, 'skipped' => 'ya se envió hoy (envío diario)']);
             }
         } else {
@@ -95,11 +95,7 @@ class BulletinDispatchController extends Controller
             // el último envío de hoy fue hace menos de (N-1) horas — el workflow
             // corre cada 2h, así que con N=4 envía a las 6, 10, 14, 18, 22.
             $intervalHours = (int) config('services.bulletin_dispatch.special_interval_hours', 4);
-            $last = ReportDispatchLog::query()
-                ->where('scope_level', 'national')
-                ->whereDate('dispatch_date', $today)
-                ->whereNotIn('mode', ['prueba', 'manual', 'test'])
-                ->latest('sent_at')->first();
+            $last = $this->logs->lastNationalToday($today);
 
             if ($last && $last->sent_at) {
                 $elapsedMin = ($now->timestamp - $last->sent_at->timestamp) / 60;
@@ -112,10 +108,7 @@ class BulletinDispatchController extends Controller
 
         // Todos los destinatarios activos (nacionales + de cada regional). El
         // dispatcher le arma a cada uno el PDF que le corresponde según su scope.
-        $recipients = ReportRecipient::query()
-            ->with('regionals')
-            ->where('active', true)
-            ->get();
+        $recipients = $this->recipients->activeWithRegionals();
 
         if ($recipients->isEmpty()) {
             return response()->json(['ok' => true, 'sent' => 0, 'message' => 'sin destinatarios activos']);

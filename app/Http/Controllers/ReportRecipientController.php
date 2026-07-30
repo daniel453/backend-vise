@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Regional;
 use App\Models\ReportRecipient;
+use App\Repositories\RegionalRepository;
+use App\Repositories\ReportRecipientRepository;
 use App\Services\BulletinDispatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,14 +17,15 @@ use Illuminate\View\View;
  */
 class ReportRecipientController extends Controller
 {
+    public function __construct(
+        private readonly ReportRecipientRepository $recipients,
+        private readonly RegionalRepository $regionals,
+    ) {}
+
     public function index(): View
     {
-        $recipients = ReportRecipient::query()
-            ->with('regionals')
-            ->orderByDesc('active')->orderBy('email')
-            ->get();
-
-        $regionals = Regional::query()->orderBy('name')->get();
+        $recipients = $this->recipients->allWithRegionals();
+        $regionals = $this->regionals->allOrdered();
 
         return view('boletines.destinatarios', compact('recipients', 'regionals'));
     }
@@ -38,25 +40,21 @@ class ReportRecipientController extends Controller
             'regional_ids.*' => ['integer', Rule::exists('regionals', 'id')],
         ]);
 
-        $recipient = ReportRecipient::query()->updateOrCreate(
-            ['email' => mb_strtolower($data['email'])],
-            ['name' => $data['name'] ?? null, 'active' => true],
-        );
-        $recipient->regionals()->sync($data['regional_ids'] ?? []);
+        $this->recipients->upsertByEmail($data['email'], $data['name'] ?? null, $data['regional_ids'] ?? []);
 
         return redirect()->route('destinatarios')->with('ok', 'Destinatario guardado.');
     }
 
     public function toggle(ReportRecipient $recipient): RedirectResponse
     {
-        $recipient->update(['active' => ! $recipient->active]);
+        $this->recipients->toggleActive($recipient);
 
         return redirect()->route('destinatarios');
     }
 
     public function destroy(ReportRecipient $recipient): RedirectResponse
     {
-        $recipient->delete();
+        $this->recipients->delete($recipient);
 
         return redirect()->route('destinatarios')->with('ok', 'Destinatario eliminado.');
     }
@@ -81,10 +79,7 @@ class ReportRecipientController extends Controller
     /** Envía el boletín nacional a TODOS los destinatarios activos, AHORA (manual). */
     public function sendNow(BulletinDispatcher $dispatcher): RedirectResponse
     {
-        $recipients = ReportRecipient::query()
-            ->with('regionals')
-            ->where('active', true)
-            ->get();
+        $recipients = $this->recipients->activeWithRegionals();
 
         if ($recipients->isEmpty()) {
             return back()->withErrors(['email' => 'No hay destinatarios activos.']);
