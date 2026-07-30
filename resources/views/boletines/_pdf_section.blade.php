@@ -127,12 +127,13 @@
                   <div class="evt-t">{{ $e['titulo'] }}</div>
                   @if($e['descripcion'])<div class="evt-d">{{ $e['descripcion'] }}</div>@endif
                   <div><span class="tag" style="background:{{ $sevC($e['severidad']) }};">{{ $e['severidad'] }}</span>@if($e['geo'])<span class="tag geo">{{ $e['geo'] }}</span>@endif</div>
+                  @if(!empty($e['fuente']))<div style="font-size:7.5px; color:#1B5E3F; margin-top:2px; line-height:1.3;">@if(!empty($e['url']))<a href="{{ $e['url'] }}" style="color:#1B5E3F; text-decoration:none;"><span class="ic" style="font-size:7px;">&#xf0c1;</span> Fuente: {{ $e['fuente'] }}</a>@else<span class="ic" style="font-size:7px;">&#xf0c1;</span> Fuente: {{ $e['fuente'] }}@endif</div>@endif
                 </div>
               @empty
                 <div class="evt"><div class="evt-d">Sin eventos de seguridad reportados en el período.</div></div>
               @endforelse
               @foreach($eventosCompactos as $e)
-                <div class="evt min"><span class="dotmin" style="color:{{ $sevC($e['severidad']) }};">&#xf111;</span> <span class="mt">{{ $e['titulo'] }}</span>@if($e['geo'])<span class="mg"> · {{ $e['geo'] }}</span>@endif<span class="tag" style="background:{{ $sevC($e['severidad']) }};float:right;">{{ $e['severidad'] }}</span></div>
+                <div class="evt min"><span class="dotmin" style="color:{{ $sevC($e['severidad']) }};">&#xf111;</span> <span class="mt">{{ $e['titulo'] }}</span>@if($e['geo'])<span class="mg"> · {{ $e['geo'] }}</span>@endif@if(!empty($e['url']))<a href="{{ $e['url'] }}" style="color:#1B5E3F;text-decoration:none;font-size:7px;"> &#xf0c1; {{ $e['fuente'] }}</a>@elseif(!empty($e['fuente']))<span style="color:#6B7280;font-size:7px;"> · {{ $e['fuente'] }}</span>@endif<span class="tag" style="background:{{ $sevC($e['severidad']) }};float:right;">{{ $e['severidad'] }}</span></div>
               @endforeach
             </div>
           </div>

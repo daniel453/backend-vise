@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Regional;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 /**
  * Prepara TODO el contenido del boletín para el PDF ANTES de renderizar, para que
@@ -167,6 +168,8 @@ class BulletinPdfPresenter
                 'severidad' => $e->severity,
                 'esCritico' => in_array($sev, ['CRÍTICO', 'CRITICO'], true),
                 'geo' => trim(($e->municipality ? $e->municipality.', ' : '').($e->department ?? ''), ', '),
+                'fuente' => $e->media_outlet,
+                'url' => Str::startsWith((string) $e->source_url, 'http') ? $e->source_url : null,
             ];
         })->all();
 
@@ -180,6 +183,8 @@ class BulletinPdfPresenter
                 'severidad' => $e->severity,
                 'esCritico' => in_array($sev, ['CRÍTICO', 'CRITICO'], true),
                 'geo' => $geo,
+                'fuente' => $e->media_outlet,
+                'url' => Str::startsWith((string) $e->source_url, 'http') ? $e->source_url : null,
             ];
         })->values()->all();
 
