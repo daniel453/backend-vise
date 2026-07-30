@@ -80,20 +80,16 @@ class BulletinPdfPresenter
         $bulletin = $v['bulletin'];
         $scopeLevel = $v['scopeLevel'];
 
-        // Título de cabecera: en los REGIONALES (una sucursal) se lista cada
-        // departamento de la regional con su propio prefijo, en mayúsculas y
-        // separados por comas: "SUCURSAL - BOGOTA, SUCURSAL - BOYACA, ...". En el
-        // nacional (y demás scopes) queda el panorama general.
+        // Título de cabecera: en los REGIONALES es el nombre de la regional, y
+        // debajo (en pequeño) los departamentos que la componen. En el nacional
+        // (y demás scopes) queda el panorama general.
         $headerTitle = 'Panorama de Orden Público y Movilidad';
+        $headerDeptos = null;
         if ($scopeLevel === 'region') {
             $deptos = Regional::query()->where('name', $v['scope'])->first()
                 ?->departaments()->orderBy('name')->pluck('name')->all() ?? [];
-            if (! $deptos) {
-                $deptos = [$v['scope']];
-            }
-            $headerTitle = collect($deptos)
-                ->map(fn ($d) => 'SUCURSAL - '.mb_strtoupper((string) $d))
-                ->implode(', ');
+            $headerTitle = 'Regional '.$v['scope'];
+            $headerDeptos = $deptos ? implode(' · ', $deptos) : null;
         }
 
         // Todos los eventos del scope, de una sola fuente -> total y distribución
@@ -239,6 +235,7 @@ class BulletinPdfPresenter
             'distribucion' => $distribucion,
             'riesgoTitle' => $riesgoTitle,
             'headerTitle' => $headerTitle,
+            'headerDeptos' => $headerDeptos,
             // Las marchas se cubren en el boletín TEMÁTICO de marchas: en los
             // regionales no se repite la sección (solo aparece en el nacional).
             'mostrarMarchas' => $scopeLevel === 'national',

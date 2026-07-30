@@ -24,8 +24,8 @@
         </span>
       </td>
       <td style="width:40%;">
-        @php $ttSuc = \Illuminate\Support\Str::startsWith($headerTitle ?? '', 'SUCURSAL'); @endphp
-        <div class="tt"@if($ttSuc) style="font-size:9.5px; line-height:1.25; font-weight:bold;"@endif>{{ $headerTitle ?? 'Panorama de Orden Público y Movilidad' }}</div>
+        <div class="tt">{{ $headerTitle ?? 'Panorama de Orden Público y Movilidad' }}</div>
+        @if(!empty($headerDeptos))<div style="font-size:8px; font-weight:600; color:#4B7A5E; letter-spacing:.2px; line-height:1.3; margin-top:1px;">{{ $headerDeptos }}</div>@endif
         <div class="ts">Boletín de Seguridad · {{ $levelLabel }}</div>
       </td>
       <td style="width:24%; text-align:center;">

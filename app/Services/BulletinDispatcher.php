@@ -52,22 +52,20 @@ class BulletinDispatcher
         $maxAgeHours = (int) config('services.bulletin_dispatch.regional_max_age_hours', 6);
         $freshAfter = Carbon::now()->subHours($maxAgeHours);
 
-        $regionalAttachments = [];      // clave regional_id => ['name'=>, 'data'=>]
-        $freshRegionalAttachments = []; // solo las frescas, para los destinatarios nacionales
+        // TODOS los destinatarios reciben TODAS las regionales (ya no se filtra
+        // por la regional del destinatario). Solo se adjuntan las frescas —una
+        // regional que no corrió/está vieja se omite para no enviar data vieja.
+        $freshRegionalAttachments = [];
         foreach (Regional::query()->orderBy('name')->get() as $regional) {
             $regionalView = $this->reports->viewData('region', $regional->name);
             $regionalBulletin = $regionalView['bulletin'];
-            if (! $regionalBulletin) {
+            if (! $regionalBulletin || ! Carbon::parse($regionalBulletin->generated_at)->gte($freshAfter)) {
                 continue;
             }
-            $attachment = [
+            $freshRegionalAttachments[] = [
                 'name' => 'Boletin-'.str_replace(' ', '-', $regional->name).'.pdf',
                 'data' => Pdf::loadView('boletines.pdf', $presenter->present($regionalView))->setPaper('a4')->output(),
             ];
-            $regionalAttachments[$regional->id] = $attachment;
-            if (Carbon::parse($regionalBulletin->generated_at)->gte($freshAfter)) {
-                $freshRegionalAttachments[] = $attachment;
-            }
         }
 
         // Boletín TEMÁTICO de marchas: adjunto extra para TODOS los destinatarios
@@ -109,24 +107,11 @@ class BulletinDispatcher
                 continue;
             }
 
-            // Regionales del destinatario (puede tener VARIAS; vacío = nacional).
-            $regionalIds = is_array($r)
-                ? array_map('intval', (array) ($r['regional_ids'] ?? []))
-                : (isset($r->id) ? $r->regionals->pluck('id')->map(fn ($id) => (int) $id)->all() : []);
-
-            // Un correo, varios adjuntos: Nacional + el/los regional(es) que apliquen.
-            $attachments = [$nationalAttachment];
-            if ($regionalIds) {
-                foreach ($regionalIds as $rid) {
-                    if (isset($regionalAttachments[$rid])) {
-                        $attachments[] = $regionalAttachments[$rid];                   // cada regional del destinatario
-                    }
-                }
-            } else {
-                $attachments = array_merge($attachments, $freshRegionalAttachments);   // nacional: todas las frescas
-            }
+            // Un solo correo para todos: Nacional + TODAS las regionales frescas
+            // + marchas. Ya no depende de la(s) regional(es) del destinatario.
+            $attachments = array_merge([$nationalAttachment], $freshRegionalAttachments);
             if ($marchAttachment) {
-                $attachments[] = $marchAttachment;                                     // marchas: para todos
+                $attachments[] = $marchAttachment;
             }
 
             try {
