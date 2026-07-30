@@ -60,11 +60,10 @@
   ];
   $deptoDe = fn($ciudad) => $ciudadDepto[mb_strtolower(trim((string) $ciudad))] ?? ((string) $ciudad !== '' ? $ciudad : 'Sin ubicación');
   $distDepto = collect($events)->groupBy(fn($e) => $deptoDe($e->city))->map->count()->sortDesc();
-  // SIEMPRE devuelve dónde es la marcha: punto/vía exacta si la fuente la trae, si no la ciudad.
-  $dondeDe = function($e) {
-    $ciudad = (string) $e->city !== '' ? $e->city : 'Ciudad no especificada';
-    $punto = $e->concentration_point ?: ($e->affected_roads ?: null);
-    return $punto ? ($ciudad.' · '.$punto) : $ciudad;
+  // Dirección de la marcha: punto de concentración exacto si la fuente lo trae,
+  // si no la vía afectada, y como último recurso la ciudad. Nunca queda vacía.
+  $direccionDe = function($e) {
+    return $e->concentration_point ?: ($e->affected_roads ?: ((string) $e->city !== '' ? $e->city : 'Ciudad no especificada'));
   };
 @endphp
 
@@ -80,7 +79,7 @@
       </td>
       <td style="width:38%;">
         <div class="tt">Marchas y Movilizaciones</div>
-        <div class="ts">Boletín temático · Monitoreo de protesta social</div>
+        <div class="ts">Boletín nacional · Monitoreo de protesta social</div>
       </td>
       <td style="width:24%; text-align:center;">
         <div class="dbx">
@@ -114,8 +113,7 @@
             <div class="ch march"><span class="ic">&#xf0a1;</span>{{ $bulletin->headline ?: 'Panorama de movilizaciones del día' }}</div>
             <div class="cb">
               @if($bulletin->conclusion)<div class="bl">{{ $bulletin->conclusion }}</div>@endif
-              @if($bulletin->recommendation)<div class="bl"><span class="ic" style="color:#16A34A;">&#xf00c;</span><b>Recomendación:</b> {{ $bulletin->recommendation }}</div>@endif
-              @if(!$bulletin->conclusion && !$bulletin->recommendation)<div class="bl" style="color:#6B7280;">Monitoreo permanente de la protesta social en las ciudades de mayor movilización.</div>@endif
+              @if(!$bulletin->conclusion)<div class="bl" style="color:#6B7280;">Monitoreo permanente de la protesta social en las ciudades de mayor movilización.</div>@endif
             </div>
           </div>
         </td>
@@ -152,18 +150,14 @@
           @foreach($marchas as $e)
             <div class="march">
               <div class="march-t">{{ $e->title }}@if($e->level)<span class="lvl" style="background:{{ $lvlC($e->level) }};">{{ $e->level }}</span>@endif</div>
-              <div class="march-loc"><span class="ic">&#xf3c5;</span><b>Dónde:</b> {{ $dondeDe($e) }}</div>
+              <div class="march-loc"><span class="ic">&#xf3c5;</span><b>Dirección:</b> {{ $direccionDe($e) }}</div>
+              <div class="march-loc" style="color:#6B21A8;"><span class="ic">&#xf4d7;</span><b>Posible recorrido:</b> {{ $e->route ?: 'Sin recorrido confirmado por la fuente.' }}</div>
               @if($e->summary)<div class="march-sum">{{ $e->summary }}</div>@endif
               <div class="march-meta">
                 @if($fmtFecha($e))<span><b>Cuándo:</b> {{ $fmtFecha($e) }}</span><br>@endif
                 @if($e->convener)<span><b>Convoca:</b> {{ $e->convener }}</span><br>@endif
-                @if($e->concentration_point)<span><b>Punto de concentración:</b> {{ $e->concentration_point }}</span><br>@endif
-                @if($e->route)<span><b>Recorrido:</b> {{ $e->route }}</span><br>@endif
                 @if($e->affected_roads)<span><b>Vías afectadas:</b> {{ $e->affected_roads }}</span>@endif
               </div>
-              @if(!$e->convener && !$e->concentration_point && !$e->route && !$e->affected_roads)
-                <div class="march-meta" style="color:#9CA3AF;">Detalle de recorrido y punto de concentración sin confirmar por la fuente.</div>
-              @endif
               @if($e->media_outlet)<div class="march-src">Fuente: {{ $e->media_outlet }}</div>@endif
             </div>
           @endforeach
@@ -194,6 +188,7 @@
           <div class="card">
             <div class="ch"><span class="ic" style="color:#16A34A;">&#xf00c;</span>Recomendaciones</div>
             <div class="cb ul">
+              @if($bulletin->recommendation)<div style="color:#14432F;"><span class="ic" style="color:#16A34A;">&#xf00c;</span><b>{{ $bulletin->recommendation }}</b></div>@endif
               <div><span class="ic">&#xf00c;</span>Verifique rutas alternas antes de desplazarse.</div>
               <div><span class="ic">&#xf00c;</span>Evite los puntos de concentración señalados.</div>
               <div><span class="ic">&#xf00c;</span>Mantenga comunicación con la Central de Monitoreo.</div>
